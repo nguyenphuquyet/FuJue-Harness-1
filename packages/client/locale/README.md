@@ -9,7 +9,7 @@ English | [中文](README.zh.md)
 
 ## Summary
 
-Use `dsh-client-locale` to switch the web GUI between the shipped English, Chinese, Japanese, Spanish, French, German, Russian, and Brazilian Portuguese (`pt`, including `pt-PT` browser requests) locales or languages added by client plugins. User selections take effect immediately; every authenticated browser persists them as `locale.preference` in `$DSH_HOME/cordis.patch.yml` through the Host settings service. New browsers use the first supported language requested by the browser until the Host read delivers a stored preference. Plugin authors add typed namespace dictionaries and translate through the public locale API; slot-rendered copy updates without a reload.
+Use `dsh-client-locale` to switch the web GUI between the shipped English, Chinese, Japanese, Spanish, French, German, Russian, Brazilian Portuguese (`pt`, including `pt-PT`), and Vietnamese locales or languages added by client plugins. User selections take effect immediately; every authenticated browser persists them as `locale.preference` in `$DSH_HOME/cordis.patch.yml` through the Host settings service. New browsers use the first supported browser language until the Host read delivers a stored preference, and open in Vietnamese when none match. Vietnamese also leads the Language selector. Plugin authors add typed namespace dictionaries and translate through the public locale API; slot-rendered copy updates without a reload.
 
 ## Table of Contents
 
@@ -31,7 +31,7 @@ Use it wherever the web GUI needs a language switch or translated copy: the ship
 
 The Language row uses a smaller label gutter in narrow browser settings; Windows and macOS desktop windows retain the standard spacing.
 
-Open Settings → General and select a registered language. The active locale is applied immediately: the UI copy switches, `<html lang>` points at the external id or built-in document tag, and the choice is written to the durable settings section. A browser without an explicit Host preference selects the first registered language that matches `navigator` by full tag and then primary subtag, falling back to English. A stored external locale waits for its definition to register instead of becoming active while unavailable.
+Open Settings → General and select a registered language. The active locale is applied immediately: the UI copy switches, `<html lang>` points at the external id or built-in document tag, and the choice is written to the durable settings section. A browser without an explicit Host preference selects the first registered language that matches `navigator` by full tag and then primary subtag, opening in Vietnamese when none match. A stored external locale waits for its definition to register instead of becoming active while unavailable.
 
 Native shells may provide `__DSH_LOCALE__` with an asynchronous `read()` and an `onChange(locale)` callback. Initialization supplies the current Host preference and ordered OS languages before the Client mounts. Automatic selection stays provisional; only Settings selections write `locale.preference`. A fresh read on each page load prevents a stale preload preference after reload. Ordinary browsers keep navigator-based detection and their existing settings-scope policy.
 
@@ -87,7 +87,7 @@ One `LocaleRuntime` owns the preference and the dictionary registry, and is itse
 
 ### Preference resolution
 
-The provisional locale comes from the browser (`navigator.languages` matched by full tag and then primary subtag, English as the fallback), standing in until the Host settings scope delivers its stored preference. The Host read runs after plugin activation so an unavailable settings scope cannot block the page, and the result replaces the provisional value live. A stored external locale waits for its definition to register. `setLocale` is the only write entry; it persists even when the id already matches the active locale, because the active value may be provisional and must survive a different browser sharing the same home.
+The provisional locale comes from the browser (`navigator.languages` matched by full tag and then primary subtag), with `DEFAULT_LOCALE` (Vietnamese) deciding when nothing matches, standing in until the Host settings scope delivers its stored preference. English remains the terminal dictionary fallback: every shipped dictionary is written against it. The Host read runs after plugin activation so an unavailable settings scope cannot block the page, and the result replaces the provisional value live. A stored external locale waits for its definition to register. `setLocale` is the only write entry; it persists even when the id already matches the active locale, because the active value may be provisional and must survive a different browser sharing the same home.
 
 ### Dictionary lookup
 

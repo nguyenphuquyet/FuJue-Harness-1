@@ -1,0 +1,7 @@
+{
+  "meta": {
+    "title": "Điều khiển máy tính",
+    "description": "Điều khiển ứng dụng trên macOS và Windows. Trên Windows, bản cài qua npm cần cấu hình helper riêng.",
+    "detail": "docs/DETAIL.md"
+  }
+}

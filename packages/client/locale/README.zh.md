@@ -9,7 +9,7 @@ kind: "package-reference"
 
 ## 概述
 
-使用 `dsh-client-locale` 可在 web GUI 中切换内置的英文、中文、日语、西班牙语、法语、德语、俄语和巴西葡萄牙语（`pt`，也匹配 `pt-PT` 浏览器请求）locale，或 client 插件添加的语言。用户选择会立即生效；每个已认证浏览器都通过 Host settings 服务把选择以 `locale.preference` 持久化到 `$DSH_HOME/cordis.patch.yml`。全新浏览器会使用浏览器请求的第一个受支持语言，直到 Host 读取送达已存储偏好。插件作者可添加类型化命名空间字典，并通过公开 locale API 翻译；经 slot 渲染的文案无需重新加载即可随语言切换更新。
+使用 `dsh-client-locale` 可在 web GUI 中切换内置的英文、中文、日语、西班牙语、法语、德语、俄语、巴西葡萄牙语（`pt`，也匹配 `pt-PT`）和越南语 locale，或 client 插件添加的语言。用户选择会立即生效；每个已认证浏览器都通过 Host settings 服务把选择以 `locale.preference` 持久化到 `$DSH_HOME/cordis.patch.yml`。全新浏览器会使用浏览器支持的第一个语言，直到 Host 读取送达已存储偏好；都不匹配时则打开越南语。越南语同时排在语言选择器首位。插件作者可添加类型化命名空间字典，并通过公开 locale API 翻译；经 slot 渲染的文案无需重新加载即可随语言切换更新。
 
 ## 目录
 
@@ -31,7 +31,7 @@ kind: "package-reference"
 
 窄屏浏览器设置中，语言行缩小标签与控件的间距；Windows 和 macOS 桌面窗口保留标准间距。
 
-打开“设置 → 常规”并选择一种已注册语言。生效中的 locale 会立即应用：UI 文案切换、`<html lang>` 指向外部 id 或内置语言的文档标签，选择写入持久设置分区。没有显式 Host 偏好的浏览器会按完整标签、再按主语言子标签选择 `navigator` 请求的第一个已注册语言，无法匹配时回退到英文。已存储的外部 locale 会等待其定义注册，不会在不可用时生效。
+打开“设置 → 常规”并选择一种已注册语言。生效中的 locale 会立即应用：UI 文案切换、`<html lang>` 指向外部 id 或内置语言的文档标签，选择写入持久设置分区。没有显式 Host 偏好的浏览器会按完整标签、再按主语言子标签选择 `navigator` 请求的第一个已注册语言，无法匹配时打开越南语。已存储的外部 locale 会等待其定义注册，不会在不可用时生效。
 
 原生壳可以提供包含异步 `read()` 和 `onChange(locale)` 回调的 `__DSH_LOCALE__`。初始化在 Client 挂载前提供当前 Host 偏好和有序的系统语言列表。自动选择保持临时状态；只有设置中的选择会写入 `locale.preference`。每次加载页面都重新读取，避免重载后沿用过期的 preload 偏好。普通浏览器继续使用 navigator 检测和原有的设置作用域策略。
 
@@ -87,7 +87,7 @@ export function apply(ctx) {
 
 ### 偏好解析
 
-临时 locale 来自浏览器（`navigator.languages` 先按完整标签、再按主语言子标签匹配，以英文作为回退），在 Host settings scope 送达其存储偏好之前生效。Host 读取在插件激活后运行，因此 settings scope 不可用不会阻塞页面，结果会实时替换临时值。已存储的外部 locale 会等待其定义注册。`setLocale` 是唯一写入入口；即使 id 已与生效中的 locale 匹配也会持久化，因为生效中的值可能是临时的，必须能在共享同一 home 的其他浏览器上存活。
+临时 locale 来自浏览器（`navigator.languages` 先按完整标签、再按主语言子标签匹配），无法匹配时由 `DEFAULT_LOCALE`（越南语）决定，在 Host settings scope 送达其存储偏好之前生效。英文仍是字典链的终结回退：所有内置字典都以英文为基准编写。Host 读取在插件激活后运行，因此 settings scope 不可用不会阻塞页面，结果会实时替换临时值。已存储的外部 locale 会等待其定义注册。`setLocale` 是唯一写入入口；即使 id 已与生效中的 locale 匹配也会持久化，因为生效中的值可能是临时的，必须能在共享同一 home 的其他浏览器上存活。
 
 ### 字典查找
 

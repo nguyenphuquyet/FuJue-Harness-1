@@ -1,4 +1,4 @@
-import { zoomEn, zoomJa, zoomEs, zoomFr, zoomDe, zoomRu, zoomPt, zoomZh } from '../zoom/locales.ts'
+import { zoomEn, zoomJa, zoomEs, zoomFr, zoomDe, zoomRu, zoomPt, zoomVi, zoomZh } from '../zoom/locales.ts'
 
 /** Copy owned by the PDF renderer. */
 export const zh = {
@@ -30,6 +30,20 @@ export const en = {
   unsupported: 'PDF preview requires the complete file contents.',
   retry: 'Retry',
 } satisfies Record<PdfLocaleKey, string>
+
+/** Vietnamese dictionary, checked against the English keys. */
+export const vi = {
+  ...zoomVi,
+  title: 'PDF',
+  pageImage: 'Trang PDF {page}',
+  loading: 'Đang kết xuất tài liệu...',
+  rendering: 'Đang kết xuất trang…',
+  failed: 'Không thể hiển thị PDF: {message}',
+  password: 'PDF này yêu cầu mật khẩu; chưa hỗ trợ xem trước tệp được bảo vệ bằng mật khẩu.',
+  workerFailed: 'Quá trình kết xuất PDF không thể tiếp tục. Vui lòng thử lại.',
+  unsupported: 'Xem trước PDF cần toàn bộ nội dung tệp.',
+  retry: 'Thử lại',
+} satisfies Record<keyof typeof en, string>
 
 declare module '@deepseek-ai/dsh-client-ui-slots' {
   interface LocaleNamespaceMap {

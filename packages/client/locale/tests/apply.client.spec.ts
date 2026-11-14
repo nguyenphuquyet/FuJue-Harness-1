@@ -113,8 +113,8 @@ describe('locale apply', () => {
   })
 
   // These are wiring specs, not default-language specs. A fresh LocaleRuntime
-  // with no jsdom `window` skips browser detection and opens on FALLBACK_LOCALE
-  // (en); each test that reads localized copy stages its locale explicitly via
+  // with no jsdom `window` skips browser detection and opens on DEFAULT_LOCALE
+  // (vi); each test that reads localized copy stages its locale explicitly via
   // setLocale/Host preference instead of leaning on a dead browser pin.
 
   it('declares the slot service', () => {
@@ -129,8 +129,9 @@ describe('locale apply', () => {
     // Base dictionaries are registered: the (ns, locale) seats are occupied.
     expect(() => locale.register('common', 'zh', {})).toThrow('already has locale')
     expect(() => locale.register('common', 'en', {})).toThrow('already has locale')
+    expect(() => locale.register('common', 'vi', {})).toThrow('already has locale')
     // The lane has no jsdom `window`, so detection never runs and a fresh
-    // service opens on FALLBACK_LOCALE (en); read the zh side explicitly.
+    // service opens on DEFAULT_LOCALE (vi); read the zh side explicitly.
     locale.setLocale('zh')
     expect(locale.bind(SETTINGS_NS)('language.title')).toBe('语言')
     const entry = before.slots.entries(SLOT).find(e => e.component === LanguageRow)!
@@ -183,6 +184,7 @@ describe('locale apply', () => {
     })
     await languagePack.await()
     expect(instance.getSnapshot().options).toEqual([
+      { id: 'vi', label: 'Tiếng Việt' },
       { id: 'zh', label: '中文' },
       { id: 'en', label: 'English' },
       { id: 'ja', label: '日本語' },
@@ -195,10 +197,11 @@ describe('locale apply', () => {
     ])
 
     await languagePack.dispose()
-    expect(instance.getSnapshot().options.map(option => option.id)).toEqual(['zh', 'en', 'ja', 'es', 'fr', 'de', 'ru', 'pt'])
+    expect(instance.getSnapshot().options.map(option => option.id)).toEqual(['vi', 'zh', 'en', 'ja', 'es', 'fr', 'de', 'ru', 'pt'])
   })
 
   it.each([
+    ['vi', 'Tiếng Việt', 'Ngôn ngữ', 'Hủy'],
     ['ja', '日本語', '言語', 'キャンセル'],
     ['es', 'Español', 'Idioma', 'Cancelar'],
     ['fr', 'Français', 'Langue', 'Annuler'],
@@ -233,7 +236,7 @@ describe('locale apply', () => {
     const b = await bench()
     // The shared mirror read once at bench time; a Host-side change reaches it
     // through the document invalidation, exactly as production announces one.
-    // Preference must differ from the provisional locale (FALLBACK_LOCALE = en
+    // Preference must differ from the provisional locale (DEFAULT_LOCALE = vi
     // with no window), or clearing it below would be unobservable.
     b.setHostPreference('zh')
     b.events.emit('settings/document-updated', [LOCALE_SETTINGS_NAMESPACE, 0])
@@ -244,7 +247,7 @@ describe('locale apply', () => {
     // Cleared preference falls back to the provisional locale.
     b.setHostPreference(undefined)
     b.events.emit('settings/document-updated', [LOCALE_SETTINGS_NAMESPACE, 0])
-    await vi.waitFor(() => { expect(locale.getLocale().active).toBe('en') })
+    await vi.waitFor(() => { expect(locale.getLocale().active).toBe('vi') })
     // Re-selecting zh after the clear is an explicit pick of the provisional
     // value and must persist as a written preference.
     b.setHostPreference('zh')

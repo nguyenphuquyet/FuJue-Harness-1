@@ -14,6 +14,12 @@ export const zh = {
 /** The secretMask namespace key union. */
 export type SecretMaskKey = keyof typeof zh
 
+/** Vietnamese dictionary, checked against the English keys. */
+export const vi = {
+  'secret.reveal': 'Hiển thị bí mật',
+  'secret.hide': 'Ẩn bí mật',
+} satisfies Record<keyof typeof en, string>
+
 declare module '@deepseek-ai/dsh-client-ui-slots' {
   interface LocaleNamespaceMap {
     /** Accessible names of the control that reveals one masked credential. */

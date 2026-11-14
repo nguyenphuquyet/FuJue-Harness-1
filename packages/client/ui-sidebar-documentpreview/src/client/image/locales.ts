@@ -1,4 +1,4 @@
-import { zoomEn, zoomJa, zoomEs, zoomFr, zoomDe, zoomRu, zoomPt, zoomZh } from '../zoom/locales.ts'
+import { zoomEn, zoomJa, zoomEs, zoomFr, zoomDe, zoomRu, zoomPt, zoomVi, zoomZh } from '../zoom/locales.ts'
 
 /** Locale-owned image renderer labels and status text. */
 export const zh = {
@@ -22,6 +22,16 @@ export const en = {
   failed: 'This image could not be displayed.',
   unsupported: 'Image preview requires the complete file contents.',
 } satisfies Record<ImagePreviewKey, string>
+
+/** Vietnamese dictionary, checked against the English keys. */
+export const vi = {
+  ...zoomVi,
+  title: 'Hình ảnh',
+  preview: 'Xem trước hình ảnh: {name}',
+  loading: 'Đang kết xuất tài liệu...',
+  failed: 'Không thể hiển thị hình ảnh này.',
+  unsupported: 'Xem trước hình ảnh cần toàn bộ nội dung tệp.',
+} satisfies Record<keyof typeof en, string>
 
 declare module '@deepseek-ai/dsh-client-ui-slots' {
   interface LocaleNamespaceMap {

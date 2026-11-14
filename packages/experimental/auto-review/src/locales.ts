@@ -67,3 +67,9 @@ export function deniedDisplayReason(reason?: string): Record<'en' | 'zh' | 'ja' 
       pt: pt.deniedWithReason(reason),
     }
 }
+
+/** Vietnamese dictionary, checked against the English keys. */
+export const vi = {
+  denied: 'Auto review đã từ chối lệnh gọi này.',
+  deniedWithReason: (reason: string): string => `Auto review đã từ chối lệnh gọi này: ${reason}`,
+} satisfies typeof en

@@ -1,6 +1,13 @@
 /** Locale-owned code renderer name and CodeBlock controls. */
 import type {} from '@deepseek-ai/dsh-client-ui-slots'
 
+/** Vietnamese dictionary, checked against the English keys. */
+export const vi = {
+  title: 'Mã',
+  copy: 'Sao chép',
+  copied: 'Đã sao chép',
+} satisfies Record<keyof typeof en, string>
+
 declare module '@deepseek-ai/dsh-client-ui-slots' {
   interface LocaleNamespaceMap {
     /** Code document implementation name and copy controls. */

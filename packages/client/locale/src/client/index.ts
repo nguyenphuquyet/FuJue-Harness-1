@@ -20,10 +20,11 @@ import {
   LOCALE_ID_PATTERN, LOCALE_IDS, LOCALE_PREFERENCE_FIELD, LOCALE_SETTINGS_NAMESPACE,
   type BuiltInLocaleId, type LocaleId, type LocaleSettings,
 } from '../locale-settings.ts'
-import { en, ja, es, fr, de, ru, pt, zh, type CommonKey } from '../locales/index.ts'
+import { en, ja, es, fr, de, ru, pt, vi, zh, type CommonKey } from '../locales/index.ts'
 import {
   en as settingsEn, ja as settingsJa, es as settingsEs, fr as settingsFr,
-  de as settingsDe, ru as settingsRu, pt as settingsPt, zh as settingsZh, type SettingsLocaleKey,
+  de as settingsDe, ru as settingsRu, pt as settingsPt, vi as settingsVi,
+  zh as settingsZh, type SettingsLocaleKey,
 } from '../locales/settings.ts'
 import type { LanguageRowInjected } from './LanguageRow.tsx'
 import { LanguageRow } from './LanguageRow.tsx'
@@ -99,15 +100,18 @@ declare module '@deepseek-ai/cordis' {
 }
 
 /**
- * English is both the locale the UI opens in when the browser names no registered
- * language (and for non-browser runs), and the dictionary consulted after the
- * active locale misses a key. One constant serves both because the shipped
- * `zh`/`en` dictionaries carry identical key sets, so neither direction can
- * leave a key unresolved; the residual case points at English rather than
- * zh because a browser naming no registered language is the reader least
- * likely to read Chinese.
+ * English is the dictionary consulted after the active locale misses a key.
+ * The shipped dictionaries carry identical key sets, so neither direction can
+ * leave a key unresolved; the residual case points at English because it is the
+ * language every shipped dictionary is written against.
  */
 export const FALLBACK_LOCALE: BuiltInLocaleId = 'en'
+
+/**
+ * Locale applied when the browser names no registered language. It also leads
+ * the Language selector so the default stays the first visible choice.
+ */
+export const DEFAULT_LOCALE: LocaleId = 'vi'
 
 /** Shared namespace for shell-level texts. */
 export const COMMON_NS = 'common'
@@ -326,9 +330,12 @@ export class LocaleRuntime {
     return this.catalog.get(localeKey(this.preference))?.id ?? this.provisional
   }
 
-  /** Snapshot the catalog in registration order. */
+  /** Snapshot the catalog with the default locale first, then registration order. */
   private localeList(): readonly LocaleDefinition[] {
-    return Object.freeze([...this.catalog.values()])
+    const definitions = [...this.catalog.values()]
+    const defaultIndex = definitions.findIndex(locale => localeKey(locale.id) === localeKey(DEFAULT_LOCALE))
+    if (defaultIndex > 0) definitions.unshift(...definitions.splice(defaultIndex, 1))
+    return Object.freeze(definitions)
   }
 
   /** Fail a new definition whose complete fallback path does not reach English. */
@@ -517,11 +524,11 @@ export class LocaleRuntime {
 }
 
 /**
- * The browser's own language wins over {@link FALLBACK_LOCALE}; an explicit
+ * The browser's own language wins over {@link DEFAULT_LOCALE}; an explicit
  * Host preference may replace this provisional value after plugin activation.
  */
 function resolveInitialLocale(locales: readonly LocaleDefinition[], languages?: readonly string[]): LocaleId {
-  return detectBrowserLocale(locales, languages) ?? FALLBACK_LOCALE
+  return detectBrowserLocale(locales, languages) ?? DEFAULT_LOCALE
 }
 
 /**
@@ -580,11 +587,11 @@ export async function apply(ctx: ClientContext): Promise<void> {
   }
   const host = ctx.configForms.get<LocaleSettings>(LOCALE_SETTINGS_NAMESPACE)
   const locale = new LocaleRuntime(ctx, host, bootstrap)
-  for (const [id, label] of [['ja', '日本語'], ['es', 'Español'], ['fr', 'Français'], ['de', 'Deutsch'], ['ru', 'Русский'], ['pt', 'Português']] as const) {
+  for (const [id, label] of [['vi', 'Tiếng Việt'], ['ja', '日本語'], ['es', 'Español'], ['fr', 'Français'], ['de', 'Deutsch'], ['ru', 'Русский'], ['pt', 'Português']] as const) {
     ctx.effect(() => locale.addLanguage({ id, label, fallback: 'en' }), `locale: ${id} language`)
   }
-  ctx.effect(() => locale.register(COMMON_NS, { zh, en, ja, es, fr, de, ru, pt }), 'locale: common dictionaries')
-  ctx.effect(() => locale.register(SETTINGS_NS, { zh: settingsZh, en: settingsEn, ja: settingsJa, es: settingsEs, fr: settingsFr, de: settingsDe, ru: settingsRu, pt: settingsPt }), 'locale: settings dictionaries')
+  ctx.effect(() => locale.register(COMMON_NS, { zh, en, ja, es, fr, de, ru, pt, vi }), 'locale: common dictionaries')
+  ctx.effect(() => locale.register(SETTINGS_NS, { zh: settingsZh, en: settingsEn, ja: settingsJa, es: settingsEs, fr: settingsFr, de: settingsDe, ru: settingsRu, pt: settingsPt, vi: settingsVi }), 'locale: settings dictionaries')
   ctx.provide('locale', locale)
   if (bridge !== undefined) {
     ctx.on('locale/change', (snapshot) => { bridge.onChange(snapshot.active) })

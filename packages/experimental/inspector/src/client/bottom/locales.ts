@@ -16,6 +16,15 @@ export const en: Record<keyof typeof zh, string> = {
   frameTitle: 'NodeJS inspector',
 }
 
+/** Vietnamese dictionary, checked against the English keys. */
+export const vi = {
+  title: 'Trình kiểm tra NodeJS',
+  toggle: 'Bật/tắt trình kiểm tra NodeJS',
+  close: 'Thu gọn',
+  resize: 'Đổi kích thước bảng trình kiểm tra NodeJS',
+  frameTitle: 'Trình kiểm tra NodeJS',
+} satisfies Record<keyof typeof en, string>
+
 declare module '@deepseek-ai/dsh-client-ui-slots' {
   interface LocaleNamespaceMap {
     /** Shared Inspector frontend copy. */

@@ -58,3 +58,8 @@ export function escalationDisplayReason(mode: string, justification: string): Re
     pt: pt.escalation(mode, justification),
   }
 }
+
+/** Vietnamese dictionary, checked against the English keys. */
+export const vi = {
+  escalation: (mode: string, justification: string): string => `Cho phép thao tác này với quyền ${mode}: ${justification}`,
+} satisfies typeof en

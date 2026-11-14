@@ -1,6 +1,6 @@
 /** Locale bundles for the agent-preset hero chip, header label, and management section. */
 
-import { guideEn, guideJa, guideEs, guideFr, guideDe, guideRu, guidePt, guideZh, type PresetGuideKey } from './guide-locales.ts'
+import { guideEn, guideJa, guideEs, guideFr, guideDe, guideRu, guidePt, guideVi, guideZh, type PresetGuideKey } from './guide-locales.ts'
 
 /** Locale keys these surfaces render. */
 export type AgentPresetSettingsKey =
@@ -381,5 +381,50 @@ export const pt = {
   createPluginChecking: 'Verificando se o modo Criador está disponível',
   createPluginUnavailable: 'Temporariamente indisponível. Reabra este menu para tentar novamente',
   createPluginMissing: 'O modo criador não está incluído nesta configuração',
+
+} satisfies Record<keyof typeof en, string>
+
+/** Vietnamese dictionary, checked against the English keys. */
+export const vi = {
+  ...guideVi,
+  builtInGroup: 'Tích hợp', customGroup: 'Tùy chỉnh',
+  sectionIntro: 'Chọn công cụ cho agent và cách agent hoạt động. Dùng chế độ Tiêu chuẩn cho tác vụ thường ngày, hoặc chế độ Nhà sáng tạo để thêm khả năng cho DeepSeek Harness.',
+
+  seatHint: 'Chọn preset agent cho tác vụ mới',
+  headerHint: 'Preset agent được chọn khi tác vụ này bắt đầu',
+  nav: 'Preset agent',
+
+  setDefault: 'Đặt làm mặc định cho tác vụ mới',
+  view: 'Xem cấu hình',
+
+  presetStandardName: 'Chế độ Tiêu chuẩn',
+  presetStandardDescription:
+    'Làm việc với mã, tệp và thông tin. Phù hợp với hầu hết tác vụ, với tìm kiếm, chỉnh sửa, lệnh terminal và các công cụ khác sẵn có khi cần.',
+  presetPtcName: 'Chế độ PTC',
+  presetPtcDescription:
+    'Bao gồm mọi khả năng của chế độ Tiêu chuẩn. Phù hợp hơn với tác vụ gọi công cụ theo lô rồi lọc, sắp xếp, loại trùng, đếm hoặc tóm tắt kết quả.',
+  presetMinimalName: 'Chế độ Tối giản',
+  presetMinimalDescription:
+    'Agent dùng terminal và đọc hình ảnh, kèm nén ngữ cảnh. Hữu ích để kiểm tra và so sánh hiệu suất cơ bản.',
+  presetCordisName: 'Chế độ Nhà sáng tạo',
+  presetCordisDescription:
+    'Tùy chỉnh DeepSeek Harness qua hội thoại. Để agent viết plugin thêm tính năng hoặc giao diện, hoặc kết hợp công cụ và lời nhắc để tạo chế độ riêng.',
+
+  inUse: 'Mặc định cho tác vụ mới',
+
+  noDescription: 'Không có mô tả.',
+  brokenBadge: 'Tải thất bại',
+
+  switchRefused: 'Không thể chuyển sang {name}: {reason}',
+  standardUnavailable: 'Chế độ Tiêu chuẩn không khả dụng. Hãy khôi phục hoặc chọn chế độ khả dụng khác.',
+
+  close: 'Đóng',
+
+  creatorDraft: 'Để agent giúp tôi tạo preset',
+  createPlugin: 'Để agent tạo plugin',
+  createPluginDescription: 'Vào chế độ Nhà sáng tạo và tạo plugin DeepSeek Harness của riêng bạn',
+  createPluginChecking: 'Đang kiểm tra xem chế độ Nhà sáng tạo có khả dụng không',
+  createPluginUnavailable: 'Tạm thời không khả dụng. Mở lại menu này để thử lại',
+  createPluginMissing: 'Chế độ Nhà sáng tạo không có trong cấu hình này',
 
 } satisfies Record<keyof typeof en, string>

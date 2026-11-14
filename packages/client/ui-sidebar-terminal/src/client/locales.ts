@@ -1,6 +1,43 @@
 /** Copy owned by the sidebar terminal feature. */
 import type {} from '@deepseek-ai/dsh-client-ui-slots'
 
+/** Vietnamese dictionary, checked against the English keys. */
+export const vi = {
+  'shortcut.noSession': 'Chọn một phiên trước',
+  recoveryFailed: 'Khôi phục terminal thất bại: {message}',
+  retryRecovery: 'Thử lại khôi phục terminal',
+  shell: 'Chọn shell',
+  shellLoading: 'Đang tải shell…',
+  shellEmpty: 'Không có shell nào khả dụng',
+  description: 'Chạy lệnh trong không gian làm việc của phiên',
+  title: 'Terminal',
+  new: 'Terminal mới',
+  loading: 'Đang đọc môi trường terminal…',
+  creating: 'Đang khởi động…',
+  connecting: 'Đang kết nối…',
+  disconnected: 'Đã ngắt kết nối.',
+  reconnect: 'Kết nối lại',
+  readonly: 'Chế độ xem này chỉ đọc.',
+  control: 'Tiếp nhận điều khiển',
+  closed: 'Terminal đã đóng.',
+  exited: 'Tiến trình đã thoát ({code})',
+  failed: 'Lỗi terminal: {message}',
+  rename: 'Tên terminal',
+  unavailable: 'Không khả dụng',
+  retry: 'Thử lại',
+  cleanupFailed: 'Không thể kết thúc terminal “{title}”: {message}',
+  missingTerminal: 'Terminal này không còn tồn tại. Hãy mở một terminal mới.',
+  inputFull: 'Bộ đệm đầu vào đã đầy. Hãy kết nối lại và thử lại.',
+  attachmentEnded: 'Kết nối terminal đã kết thúc. Hãy kết nối lại để tiếp tục.',
+  invalidOutput: 'Không thể nhận màn hình terminal. Hãy kết nối lại để khôi phục.',
+  terminalLimit: 'Đã đạt giới hạn terminal. Hãy đóng các terminal không dùng và thử lại. Các terminal đã thoát cũng được tính vào giới hạn.',
+  'badge.agent': 'Agent',
+  'badge.agentHint': 'Do agent mở. Gõ tại đây sẽ tiếp quản; sau đó agent chỉ có thể đọc.',
+  'badge.sandbox': 'Hộp cát',
+  'badge.readOnlyHint': 'Lệnh chạy trong hộp cát chỉ đọc của agent, kể cả lệnh bạn gõ tại đây.',
+  'badge.workspaceWriteHint': 'Lệnh chạy trong hộp cát không gian làm việc của agent, kể cả lệnh bạn gõ tại đây.',
+} satisfies Record<keyof typeof en, string>
+
 declare module '@deepseek-ai/dsh-client-ui-slots' {
   interface LocaleNamespaceMap {
     sidebarTerminal: keyof typeof zh

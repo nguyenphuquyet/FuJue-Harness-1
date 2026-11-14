@@ -191,7 +191,7 @@ Assistant 消息的 `source` 为 `{ kind: 'model', provider: 'deepseek-chat-expo
 - 插件的 client 面 `$mount` 自己的 `/remote` 贡献（与 `dsh-api-remote-access` 相同的自挂载方式，不进入 `dsh-api-remotes` 聚合），作为 `sidebar.session.action` 层注册 `ImportSessionsAction`。它先渲染行内容，再渲染触发按钮，最后渲染对话框；不能导入的 Peer 会原样得到行内容，因此新建会话按钮继续渲染。按钮仅在 `useRemoteAccess('deepseekChatImport/limits')` 为真时显示；对话框是该层的本地状态，通过 `Modal` portal 渲染。
 - 服务页面上的上传使用 `XMLHttpRequest`，因为 Fetch 不提供上传进度。Host 跑在页面之外执行上下文中的页面（静态 Cloudflare Pages 预览）提供 `__DSH_TRANSPORT__.fetch`：压缩包经该载体传输，没有字节进度，直接进入读取与导入阶段。URL 是相对 `document.baseURI` 解析的 `UPLOAD_ROUTE`，因此加路径前缀的代理仍然可用。非 200 应答、没有 outcome 行的应答、不是合法协议值的行或连接失败归为 `upload-failed` 结果；抛出的错误以未知失败文案显示。
 - 载体选择没有复用 `@deepseek-ai/dsh-client-file-upload`。该包的服务会缓冲整个应答，流式 NDJSON 进度会丢失，而且它的 `post` 方法不在公开接口上；把选择留在本包内同时保住了进度行与包依赖边界。
-- 文案走 8 种语言的 locale 字典，英文用 sentence case；摘要行有 `.one` / `.other` 两种形式，按 `count === 1` 选择。
+- 文案走 9 种语言的 locale 字典，英文用 sentence case；摘要行有 `.one` / `.other` 两种形式，按 `count === 1` 选择。
 
 ### Realization
 

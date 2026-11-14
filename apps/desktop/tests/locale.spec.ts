@@ -1,6 +1,6 @@
 import { SHIPPED_LOCALE_IDS } from '../../../scripts/shipped-locales.ts'
 import { describe, expect, it } from 'vitest'
-import { en, formatDesktopMessage, resolveDesktopLocale, resolveDesktopStartupLocale, ja, zh, es, fr, de, ru, pt } from '../src/locale.ts'
+import { en, formatDesktopMessage, resolveDesktopLocale, resolveDesktopStartupLocale, ja, zh, es, fr, de, ru, pt, vi } from '../src/locale.ts'
 
 describe('desktop locale dictionaries', () => {
   it('uses the same concise Chinese configuration error in the toast and details', () => {
@@ -9,13 +9,14 @@ describe('desktop locale dictionaries', () => {
     }
   })
 
-  it('ships baseline and Japanese keys and falls back for unsupported languages', () => {
+  it('ships baseline and Japanese keys and falls back to Vietnamese for unsupported languages', () => {
     expect(Object.keys(zh)).toEqual(Object.keys(en))
     expect(Object.keys(ja)).toEqual(Object.keys(en))
+    expect(Object.keys(vi)).toEqual(Object.keys(en))
     expect(resolveDesktopLocale('JA-jp')).toEqual({ id: 'ja', messages: ja })
     expect(resolveDesktopLocale('zh-Hans-CN').messages).toEqual(zh)
     expect(resolveDesktopLocale('en-US').messages).toEqual(en)
-    expect(resolveDesktopLocale('it-IT').messages).toEqual(en)
+    expect(resolveDesktopLocale('it-IT')).toEqual({ id: 'vi', messages: vi })
   })
 
   it.each([
@@ -48,7 +49,7 @@ describe('desktop locale dictionaries', () => {
     expect(resolveDesktopStartupLocale(null, ['ja-JP', 'zh-Hant', 'en-US']).id).toBe('ja')
     expect(resolveDesktopStartupLocale(null, ['en-US', 'zh-CN']).id).toBe('en')
     expect(resolveDesktopStartupLocale(null, ['ja-JP']).id).toBe('ja')
-    expect(resolveDesktopStartupLocale(null, []).id).toBe('en')
+    expect(resolveDesktopStartupLocale(null, [])).toEqual({ id: 'vi', messages: vi })
     expect(resolveDesktopStartupLocale('ja', ['zh-CN']).id).toBe('ja')
   })
 

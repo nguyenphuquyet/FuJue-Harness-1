@@ -226,3 +226,30 @@ export const pt = {
   'empty.models': 'Nenhum modelo disponível.',
   'empty.efforts': 'Este modelo não fornece níveis de esforço de raciocínio.',
 } satisfies Record<keyof typeof en, string>
+
+/** Vietnamese dictionary, checked against the English keys. */
+export const vi = {
+  'provider.account': 'Tài khoản DeepSeek',
+  'command.label': 'Mô hình',
+  'command.description': 'Chọn mô hình cho cuộc hội thoại này',
+  'option.loadError': 'Không tải được danh mục: {message}',
+  'trigger.fallback': 'Chọn mô hình',
+  'trigger.loading': 'Đang tải mô hình…',
+  'trigger.selectAria': 'Chọn mô hình',
+  'trigger.aria': 'Chọn mô hình, hiện tại {model}',
+  'trigger.ariaEffort': 'Chọn mô hình, hiện tại {model}, mức suy luận {effort}',
+  'menu.aria': 'Mô hình và mức suy luận',
+  'menu.model': 'Mô hình',
+  'menu.effort': 'Mức',
+  'effort.providerDefault': 'Mặc định',
+  'status.loading': 'Đang làm mới danh sách mô hình…',
+  'error.action': 'Thao tác mô hình thất bại: {message}',
+  'error.sessionInUse': 'Phiên này đang được sử dụng, có thể bởi một phiên bản DeepSeek Harness khác đang chạy (như dsh web hoặc ứng dụng desktop). Hãy thoát các phiên bản DeepSeek Harness khác đang chạy rồi thử lại.',
+  'action.reload': 'Tải lại',
+  'warning.groupLoad': 'Không tải được {name}: {message}',
+  'search.placeholder': 'Tìm kiếm mô hình…',
+  'search.clear': 'Xóa tìm kiếm',
+  'search.empty': 'Không có mô hình phù hợp.',
+  'empty.models': 'Không có mô hình khả dụng.',
+  'empty.efforts': 'Mô hình này không cung cấp mức suy luận nào.',
+} satisfies Record<keyof typeof en, string>

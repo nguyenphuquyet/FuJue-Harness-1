@@ -33,6 +33,25 @@ export const zh = {
 /** The reference namespace key union. */
 export type ReferenceKey = keyof typeof zh
 
+/** Vietnamese dictionary, checked against the English keys. */
+export const vi = {
+  'section.files': 'Tệp và thư mục',
+  'section.subagents': 'Agent con',
+  'section.sessions': 'Phiên',
+  'candidate.noCwd': '(không có cwd)',
+  'crumb.root': 'Không gian làm việc',
+  'fileOpen.title': 'Không thể mở tệp',
+  'fileOpen.failed': 'Không thể mở “{path}”. Hãy thử lại hoặc đóng thông báo này.',
+  'fileOpen.close': 'Đóng',
+  'fileOpen.retry': 'Thử lại',
+  'time.now': 'vừa xong',
+  'time.minutes': '{n} phút',
+  'time.hours': '{n} giờ',
+  'time.days': '{n} ngày',
+  'time.months': '{n} tháng',
+  'time.years': '{n} năm',
+} satisfies Record<keyof typeof en, string>
+
 declare module '@deepseek-ai/dsh-client-ui-slots' {
   interface LocaleNamespaceMap {
     /** Reference menu and per-file navigation feedback. */

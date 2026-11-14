@@ -22,3 +22,6 @@ export const ru = { toggle: 'Переключить левую боковую п
 
 /** Portuguese dictionary, checked against the English keys. */
 export const pt = { toggle: 'Alternar barra lateral esquerda' } satisfies Record<keyof typeof en, string>
+
+/** Vietnamese dictionary, checked against the English keys. */
+export const vi: Record<keyof typeof zh, string> = { toggle: 'Bật/tắt thanh bên trái' }

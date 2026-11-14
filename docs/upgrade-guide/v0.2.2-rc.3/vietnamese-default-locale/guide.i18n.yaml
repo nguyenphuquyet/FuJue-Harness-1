@@ -1,0 +1,16 @@
+# Bilingual-pair consistency record for guide.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/upgrade-guide/v0.2.2-rc.3/vietnamese-default-locale/guide.md
+/:
+  en: 5da96f9d479f32a7
+  zh: 5e69db01a787d5d2
+/vietnamese-becomes-the-fallback-ui-language:
+  en: 78954a956570825b
+  zh: ceb8962539794779
+/vietnamese-becomes-the-fallback-ui-language/change:
+  en: 970120ef9059e147
+  zh: 23e6ac4f646a1c63
+/vietnamese-becomes-the-fallback-ui-language/migration:
+  en: 14f35626d6bfba19
+  zh: f691925a9c67c498

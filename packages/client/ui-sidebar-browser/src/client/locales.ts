@@ -61,6 +61,36 @@ export const en = {
   'address.unknown': 'The page navigated; this carrier cannot read its new URL.',
 } satisfies Record<SidebarBrowserKey, string>
 
+/** Vietnamese dictionary, checked against the English keys. */
+export const vi = {
+  'type.label': 'Trình duyệt',
+  'guide.title': 'Trình duyệt',
+  'guide.description': 'Duyệt các trang web',
+  'shortcut.noSession': 'Hãy mở một phiên trước',
+  'address.placeholder': 'Nhập địa chỉ HTTP(S)',
+  'address.changed': 'URL đã thay đổi',
+  back: 'Quay lại',
+  forward: 'Tiến tới',
+  reload: 'Tải lại',
+  go: 'Đi',
+  external: 'Mở trong trình duyệt hệ thống',
+  'sandbox.disable': 'Tắt hạn chế sandbox',
+  'sandbox.enable': 'Khôi phục hạn chế sandbox',
+  'sandbox.warning': 'Hạn chế sandbox đã bị tắt; trang có thể điều hướng ứng dụng cấp cao nhất và sử dụng tải xuống, hộp thoại modal và khóa nhập liệu.',
+  start: 'Nhập địa chỉ HTTP(S) để bắt đầu duyệt',
+  loading: 'Đang mở…',
+  'restore.previous': 'Đã mở trước đó',
+  'restore.action': 'Khôi phục trang',
+  'error.empty': 'Hãy nhập địa chỉ.',
+  'error.invalid': 'Địa chỉ đó không hợp lệ hoặc quá dài.',
+  'error.protocol': 'Chỉ hỗ trợ địa chỉ HTTP và HTTPS; hãy dùng Xem trước tài liệu cho tệp cục bộ.',
+  'error.credentials': 'Địa chỉ không được chứa tên người dùng hoặc mật khẩu.',
+  'error.application-origin': 'Trình duyệt nhúng không thể mở chính ứng dụng DeepSeek Harness.',
+  'load.failed': 'Không thể tải trang; hãy tải lại hoặc mở trang trong trình duyệt hệ thống.',
+  'load.failed.detail': 'Tải trang thất bại ({code}): {description}',
+  'address.unknown': 'Trang đã điều hướng; khung chứa này không thể đọc URL mới.',
+} satisfies Record<keyof typeof en, string>
+
 declare module '@deepseek-ai/dsh-client-ui-slots' {
   interface LocaleNamespaceMap {
     /** Sidebar Browser labels, navigation controls, and failures. */

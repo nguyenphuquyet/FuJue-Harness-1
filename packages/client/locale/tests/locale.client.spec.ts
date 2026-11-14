@@ -4,7 +4,7 @@ import { Context } from '@deepseek-ai/cordis'
 import { stubConfigForm, type StubConfigForm } from '@deepseek-ai/dsh-client-test-runtime'
 import type { LocaleSettings, LocaleSnapshot } from '@deepseek-ai/dsh-client-locale/client'
 import { zh, en, ja } from '../src/locales/settings.ts'
-import { FALLBACK_LOCALE, LocaleRuntime } from '@deepseek-ai/dsh-client-locale/client'
+import { DEFAULT_LOCALE, FALLBACK_LOCALE, LocaleRuntime } from '@deepseek-ai/dsh-client-locale/client'
 const make = (host?: StubConfigForm<LocaleSettings>): {
   ctx: Context
   svc: LocaleRuntime
@@ -177,16 +177,17 @@ describe('LocaleRuntime', () => {
   })
 
   it('persists an explicit pick of the provisional locale, so a shared DSH home agrees', () => {
-    // A browser naming no shipped language opens at FALLBACK_LOCALE with
+    // A browser naming no shipped language opens at DEFAULT_LOCALE with
     // nothing stored. Choosing that same language in the menu must become
     // durable, or a Chinese browser sharing the home still opens Chinese.
     stubLanguages('fr-FR')
     const host = stubConfigForm<LocaleSettings>()
     const { svc } = make(host)
-    expect(svc.getLocale().active).toBe('en')
+    svc.addLanguage({ id: 'vi', label: 'Tiếng Việt', fallback: 'en' })
+    expect(svc.getLocale().active).toBe('vi')
     expect(host.set).not.toHaveBeenCalled()
-    svc.setLocale('en')
-    expect(host.set).toHaveBeenCalledWith('preference', 'en')
+    svc.setLocale('vi')
+    expect(host.set).toHaveBeenCalledWith('preference', 'vi')
   })
 
   it('setLocale without a host scope stays process-local', () => {
@@ -351,10 +352,10 @@ describe('LocaleRuntime', () => {
     expect(make().svc.getLocale().active).toBe('en')
     vi.stubGlobal('navigator', { language: 'en-US' })
     expect(make().svc.getLocale().active).toBe('en')
-    // No shipped language anywhere in the browser's preferences: en is the
-    // product default rather than an arbitrary near-match.
+    // No shipped language anywhere in the browser's preferences: DEFAULT_LOCALE
+    // is the product fallback rather than an arbitrary near-match.
     stubLanguages('fr-FR', 'de')
-    expect(make().svc.getLocale().active).toBe('en')
+    expect(make().svc.getLocale().active).toBe('vi')
   })
 
   it('re-evaluates browser languages as external definitions register and unload', () => {
@@ -373,7 +374,7 @@ describe('LocaleRuntime', () => {
     // reach the resolution at all.
     stubLanguages('zh-CN')
     const { svc } = make()
-    expect(svc.getLocale().active).toBe('en')
+    expect(svc.getLocale().active).toBe('vi')
     svc.setLocale('zh')
     expect(svc.getLocale().active).toBe('zh')
   })
@@ -385,12 +386,13 @@ describe('LocaleRuntime', () => {
     expect(svc.getLocale().active).toBe('zh')
   })
 
-  it('serves English as both the opening locale and the dictionary fallback', () => {
-    // One constant covers both jobs: the locale the UI opens in with no usable
-    // browser signal, and the dictionary backing a key the active locale
-    // misses. Safe to share only because the shipped zh/en dictionaries carry
-    // identical key sets (asserted below on a registered pair).
+  it('serves English as the terminal dictionary fallback', () => {
+    // FALLBACK_LOCALE owns the dictionary chain: the language consulted when the
+    // active locale misses a key. Safe to point at English only because the
+    // shipped dictionaries carry identical key sets (asserted below on a
+    // registered pair). Opening locale is DEFAULT_LOCALE's job.
     expect(FALLBACK_LOCALE).toBe('en')
+    expect(DEFAULT_LOCALE).toBe('vi')
     vi.stubGlobal('window', undefined)
     const { svc } = make()
     // A key present only in en resolves for a zh reader through the fallback.
@@ -413,5 +415,14 @@ describe('LocaleRuntime', () => {
       { id: 'zh', label: '中文', fallback: 'en' },
       { id: 'en', label: 'English' },
     ])
+  })
+
+  it('leads the catalog with DEFAULT_LOCALE once it registers', () => {
+    const { svc } = make()
+    svc.addLanguage({ id: 'ja', label: '日本語', fallback: 'en' })
+    svc.addLanguage({ id: 'vi', label: 'Tiếng Việt', fallback: 'en' })
+    expect(svc.getLocale().locales.map(locale => locale.id)).toEqual(['vi', 'zh', 'en', 'ja'])
+    svc.setLocale('vi')
+    expect(svc.bind('common' as string)('missing.key')).toBe('missing.key')
   })
 })

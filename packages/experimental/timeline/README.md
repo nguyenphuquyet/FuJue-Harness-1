@@ -64,7 +64,7 @@ The file has a format version separate from the plugin version. Export a tree fr
 
 ### Set languages and writing guidance
 
-The interface follows the Harness display language. **Follow app** uses the display language set in Harness. If the display language is automatic, Timeline uses the connected browser’s language for new task text and reports. Without a browser language, it uses the Host language. Timeline supports English, Simplified Chinese, Japanese, Spanish, French, German, Russian, and Brazilian Portuguese.
+The interface follows the Harness display language and ships all nine Harness languages. For new task text and reports, **Follow app** turns the display language into one of the eight model output languages — English, Simplified Chinese, Japanese, Spanish, French, German, Russian, or Brazilian Portuguese — and any other display language, including Vietnamese, requests English output. When the display language is automatic, Timeline uses the connected browser’s language; without a browser language, it uses the Host language.
 
 Edit **Task writing guidance** for task titles and details, **Instructions for all levels** for all reports, and the additional instructions for each report level. The defaults ask the agent to lead with concrete results, explain unfamiliar terms and numbers, and connect findings to your goal. You can restore the default guidance in the editor.
 

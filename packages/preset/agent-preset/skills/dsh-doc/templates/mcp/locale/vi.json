@@ -1,0 +1,7 @@
+{
+  "meta": {
+    "title": "Kết nối MCP minh họa",
+    "description": "Kết nối một máy chủ MCP từ xa để đưa các công cụ của nó cho agent sử dụng.",
+    "detail": "docs/DETAIL.md"
+  }
+}

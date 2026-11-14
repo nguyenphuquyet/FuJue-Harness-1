@@ -103,3 +103,10 @@ export const launchAccessQuestion = {
   ru: 'Разрешить запуск? Доступ к окнам запрашивается отдельно.',
   pt: 'Permitir iniciar esta entrada? O acesso às janelas é solicitado separadamente.',
 }
+
+/** Vietnamese dictionary, checked against the English keys. */
+export const vi = {
+  question: 'Cho phép agent điều khiển ứng dụng này bằng Computer Use?',
+  detail: 'Quản lý quyền ứng dụng cho mọi phiên trên trang plugin.',
+  approve: 'Cho phép trong phiên này',
+} satisfies Record<keyof typeof en, string>

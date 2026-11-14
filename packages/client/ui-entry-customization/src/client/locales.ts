@@ -85,3 +85,14 @@ export const pt = {
   'createPrompt.conversation': 'Crie um plug-in de visualização de conversa DSH.',
   'createPrompt.rightbar': 'Crie um plug-in DSH com uma entrada na barra lateral direita.',
 } satisfies Record<keyof typeof en, string>
+
+/** Vietnamese dictionary, checked against the English keys. */
+export const vi = {
+  'pinTooltip': 'Ghim vào thanh bên trái',
+  'pin': 'Ghim {name} vào thanh bên',
+  install: 'Khám phá các plugin khác',
+  create: 'Tạo plugin của bạn',
+  'createPrompt.sidebar': 'Tạo plugin DeepSeek Harness với một mục ở thanh bên trái.',
+  'createPrompt.conversation': 'Tạo plugin giao diện hội thoại DeepSeek Harness.',
+  'createPrompt.rightbar': 'Tạo plugin DeepSeek Harness với một mục ở thanh bên phải.',
+} satisfies Record<keyof typeof en, string>

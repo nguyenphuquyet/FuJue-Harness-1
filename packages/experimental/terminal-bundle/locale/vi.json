@@ -1,0 +1,7 @@
+{
+  "meta": {
+    "title": "Terminal duy trì",
+    "description": "Cung cấp cho agent các terminal mở thành thẻ ở thanh bên mà bạn có thể theo dõi và tiếp quản bằng cách gõ vào đó. Tiến trình vẫn chạy giữa các lần gọi công cụ, nên agent có thể khởi động máy chủ phát triển hoặc REPL rồi quay lại đọc kết quả; agent cũng đọc được các terminal bạn tự mở.",
+    "detail": "docs/DETAIL.md"
+  }
+}

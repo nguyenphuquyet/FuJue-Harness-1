@@ -1,0 +1,7 @@
+{
+  "meta": {
+    "title": "Nhập trò chuyện DeepSeek",
+    "description": "Tải lên tệp ZIP xuất trò chuyện từ trang web DeepSeek bằng nút cạnh Phiên mới; mỗi cuộc trò chuyện trở thành một phiên trong không gian làm việc bạn chọn.",
+    "detail": "docs/DETAIL.md"
+  }
+}
