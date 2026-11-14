@@ -35,6 +35,7 @@ const dshBuildWorkflows = [
   'release.yml',
   'release-publish.yml',
   'sandbox.yml',
+  'windows-build.yml',
 ]
 
 afterEach(() => {

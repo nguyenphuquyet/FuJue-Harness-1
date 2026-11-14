@@ -1,0 +1,70 @@
+name: Windows build
+
+# Builds the harness from source on a GitHub-hosted Windows runner: native
+# addon, host and client artifacts, and the Web bundle. The upstream packaging
+# workflows target retained runners and signing secrets, so this workflow keeps
+# a fork buildable with no repository configuration.
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  PRIMARY_NODE_VERSION: '24'
+  # CI runs must never report to the production telemetry endpoint.
+  DSH_TELEMETRY_DISABLED: '1'
+
+# Cancel a superseded run on a new push, as in ci.yml.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build on Windows
+    runs-on: windows-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@v5.0.0
+        with:
+          dest: ${{ runner.temp }}/setup-pnpm-js-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: ${{ env.PRIMARY_NODE_VERSION }}
+          cache: pnpm
+      - name: Install (immutable)
+        run: pnpm install --frozen-lockfile
+
+      - name: Build native addon, host, client, and Web artifacts
+        run: pnpm run build:artifacts
+
+      - name: Type-check aggregate test and script programs
+        run: pnpm run build:check
+
+      - name: Smoke-test the built CLI
+        run: node apps/cli/lib/bin.js --help
+
+      - name: Smoke-test the built Web bundle
+        run: |
+          $index = 'apps/web/dist/index.html'
+          if (-not (Test-Path $index)) { throw "missing $index" }
+          $html = Get-Content $index -Raw
+          if ($html -notmatch '<div id="root"') { throw 'Web bundle has no root element' }
+
+      - name: Upload Web bundle
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: dsh-web-dist-${{ github.run_id }}-${{ github.run_attempt }}
+          path: apps/web/dist/
+          if-no-files-found: error
+          retention-days: 7
