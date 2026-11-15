@@ -102,11 +102,12 @@ node scripts/apply-content.mjs đường/dẫn/tới/seed-content.json
 
 ## Kết nối FuJue Harness Desktop
 
-Trong `cordis.yml` của profile Desktop:
+Trong `cordis.patch.yml` (hoặc `cordis.yml`) của profile Desktop. `config` của một patch entry **thay thế** config lớp bundle, nên phải giữ lại `desktopPlatform`:
 
 ```yaml
 - id: deepseek-account
   config:
+    desktopPlatform: !!js "ctx.get('profileContext')?.name === 'desktop' && ['darwin', 'win32'].includes(process.platform) ? process.platform : null"
     platformOrigin: 'https://platform.fujue.ai'
     harnessOrigin: 'https://platform.fujue.ai'
     inferenceOrigin: 'https://platform.fujue.ai'
