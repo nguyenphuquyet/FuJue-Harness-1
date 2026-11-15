@@ -4,7 +4,8 @@
 export interface UpstreamEndpoint {
   readonly name: string
   readonly chatBaseUrl: string
-  readonly anthropicBaseUrl: string
+  /** Anthropic-compatible root; null when the gateway translates to `chatBaseUrl`. */
+  readonly anthropicBaseUrl: string | null
   readonly apiKey: string
 }
 
@@ -36,6 +37,19 @@ export interface ChatRequest {
   readonly maxTokens?: number
   /** Effort string from the model's reasoning policy; an empty value sends no thinking parameter. */
   readonly reasoningEffort?: string
+}
+
+/**
+ * Detect a provider that rejected the Platform's own credential.
+ *
+ * The caller authenticated with a Platform session or API key, so forwarding
+ * the provider's 401/403 would make a client discard a still-valid credential.
+ *
+ * @param response - upstream response.
+ * @returns true when the provider refused the Platform credential.
+ */
+export function rejectedPlatformCredential(response: Response): boolean {
+  return response.status === 401 || response.status === 403
 }
 
 /**
@@ -75,6 +89,31 @@ export async function requestChatCompletion(
 }
 
 /**
+ * Post an already-built body to a provider's chat completions endpoint.
+ *
+ * @param endpoint - resolved provider credentials and base URL.
+ * @param body - OpenAI chat completions request body.
+ * @param stream - whether the caller expects server-sent events.
+ * @returns the upstream response; callers own metering and body forwarding.
+ */
+export async function postChatCompletion(
+  endpoint: UpstreamEndpoint,
+  body: Record<string, unknown>,
+  stream: boolean,
+): Promise<Response> {
+  return fetch(`${endpoint.chatBaseUrl}/chat/completions`, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      authorization: `Bearer ${endpoint.apiKey}`,
+      accept: stream ? 'text/event-stream' : 'application/json',
+    },
+    body: JSON.stringify(body),
+    signal: AbortSignal.timeout(600_000),
+  })
+}
+
+/**
  * Forward one Anthropic-compatible request to the upstream provider.
  *
  * @param endpoint - resolved provider credentials and base URL.
@@ -85,7 +124,7 @@ export async function requestChatCompletion(
  * @returns the upstream response.
  */
 export async function forwardAnthropic(
-  endpoint: UpstreamEndpoint,
+  endpoint: UpstreamEndpoint & { readonly anthropicBaseUrl: string },
   path: string,
   request: Request,
   body: Uint8Array | null,

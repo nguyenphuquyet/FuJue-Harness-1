@@ -570,7 +570,9 @@ export async function upstreamForModel(model: PlatformModel): Promise<UpstreamEn
   return {
     name: provider.name,
     chatBaseUrl: stripSlash(provider.chatBaseUrl ?? openAiBaseUrl()),
-    anthropicBaseUrl: stripSlash(provider.anthropicBaseUrl ?? anthropicBaseUrl()),
+    anthropicBaseUrl: provider.anthropicBaseUrl === null || provider.anthropicBaseUrl.trim() === ''
+      ? anthropicBaseUrl()
+      : stripSlash(provider.anthropicBaseUrl.trim()),
     apiKey,
   }
 }
@@ -595,7 +597,9 @@ export async function defaultUpstream(): Promise<UpstreamEndpoint> {
       return {
         name: preferred.name,
         chatBaseUrl: stripSlash(preferred.chatBaseUrl ?? openAiBaseUrl()),
-        anthropicBaseUrl: stripSlash(preferred.anthropicBaseUrl ?? anthropicBaseUrl()),
+        anthropicBaseUrl: preferred.anthropicBaseUrl === null || preferred.anthropicBaseUrl.trim() === ''
+          ? anthropicBaseUrl()
+          : stripSlash(preferred.anthropicBaseUrl.trim()),
         apiKey,
       }
     }

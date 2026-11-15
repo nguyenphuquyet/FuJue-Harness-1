@@ -10,7 +10,7 @@ Platform phục vụ đúng giao thức mà FuJue Harness Desktop đang dùng, n
 - **Khoá API** — tạo, xem tiền tố, thu hồi tức thì. Chỉ băm SHA-256 được lưu; bí mật hiển thị đúng một lần.
 - **Playground** — chọn mô hình, system prompt, temperature, độ dài tối đa; mỗi lượt hiện token và chi phí.
 - **Đo lường** — token vào/ra, chi phí, phân bổ theo ngày, mô hình, khoá và nguồn gọi (Playground / API / Desktop).
-- **Cổng mô hình** — OpenAI-compatible (`/v1/chat/completions`) cho ứng dụng bất kỳ và Anthropic-compatible (`/anthropic/*`) cho Desktop.
+- **Cổng mô hình** — OpenAI-compatible (`/v1/chat/completions`) cho ứng dụng bất kỳ và Anthropic-compatible (`/anthropic/*`) cho Desktop. Nhà cung cấp chỉ có endpoint OpenAI vẫn phục vụ được Desktop: cổng tự dịch yêu cầu, lời gọi công cụ và luồng sự kiện sang `/chat/completions`.
 - **Suy luận theo mô hình** — bật/tắt và tự đặt danh sách mức (mã + giá trị API) cùng mức mặc định trong `/admin/models`; cổng mô hình ép đúng chính sách đó cho cả hai giao thức.
 - **Thông báo trong app** — danh sách, nội dung, sự kiện hiển thị/CTA/đóng, song ngữ Việt–Anh.
 - **Quản lý thiết bị** — xem và thu hồi từng token Desktop, hoặc thu hồi toàn bộ.
@@ -87,7 +87,7 @@ node scripts/apply-content.mjs đường/dẫn/tới/seed-content.json
 | `PLATFORM_ORIGIN` | khuyến nghị | Origin công khai, dùng trong `authorize_url` và `authorized_url`. Bỏ trống thì suy ra từ request. |
 | `DEEPSEEK_API_KEY` | khuyến nghị | Khoá nhà cung cấp mặc định. Có thể thay bằng khoá lưu trong trang quản trị nhà cung cấp; thiếu cả hai thì Playground/API trả `503 upstream_not_configured`. |
 | `DEEPSEEK_UPSTREAM_URL` | không | Gốc OpenAI-compatible mặc định, dùng khi nhà cung cấp để trống URL. Mặc định `https://api.deepseek.com`. |
-| `DEEPSEEK_ANTHROPIC_BASE_URL` | không | Gốc Anthropic-compatible mặc định, mặc định `https://api.deepseek.com/anthropic`. |
+| `DEEPSEEK_ANTHROPIC_BASE_URL` | không | Gốc Anthropic-compatible mặc định. Để trống thì cổng `/anthropic` dịch sang `/chat/completions` của gốc OpenAI, nên hầu hết nhà cung cấp bên thứ ba chỉ cần URL OpenAI. |
 | `DEEPSEEK_MODEL_MAP` | không | JSON ánh xạ id Platform → id nhà cung cấp cho mô hình chưa có `upstream_id`, ví dụ `{"deepseek-flash":"provider-model"}`. |
 | `HARNESS_VERSION` | không | Phiên bản FuJue Harness mặc định trên trang tải, ví dụ `0.2.2`. Quản trị viên có thể ghi đè trong `/admin/downloads`. |
 | `HARNESS_RELEASES_URL` | không | Trang phát hành mặc định cho các bộ cài chưa có URL trực tiếp. |
@@ -192,6 +192,8 @@ Danh mục nằm trong bảng `models` và được quản lý tại `/admin/mod
 
 Mỗi mô hình trỏ tới một nhà cung cấp trong bảng `providers` (`chat_base_url`, `anthropic_base_url`, `api_key`). Nhà cung cấp bị tắt hoặc thiếu khoá sẽ trả `503` cho các mô hình dùng nó; mô hình không có nhà cung cấp quay về `DEEPSEEK_*`. Khoá nhà cung cấp chỉ được ghi, không bao giờ trả lại qua API — giao diện chỉ thấy bốn ký tự cuối.
 
+Để trống `anthropic_base_url` là chế độ mặc định: cổng `/anthropic/v1/messages` dịch yêu cầu sang `/chat/completions` của `chat_base_url`, gồm system prompt, ảnh, `tool_use`/`tool_result`, `stop_sequences` và cả luồng SSE. Chỉ điền `anthropic_base_url` khi nhà cung cấp có sẵn giao thức Anthropic; khi đó cổng chuyển tiếp nguyên vẹn.
+
 Id mô hình nhận cả dạng có namespace như `deepseek/deepseek-v4.1-flash-free`; đặt id nhà cung cấp riêng ở trường **Id phía nhà cung cấp** khi hai bên khác nhau.
 
 ### Suy luận
@@ -211,6 +213,7 @@ Cổng mô hình áp chính sách trước khi gọi nhà cung cấp:
 | Giao thức | Trường gửi đi |
 | --- | --- |
 | Anthropic (`/anthropic/messages`) | `thinking: { type: 'disabled' \| 'enabled' }` và `output_config: { effort: <apiValue> }` (bỏ `output_config` khi tắt suy luận). |
+| Anthropic dịch sang OpenAI (nhà cung cấp chỉ có `chat_base_url`) | `reasoning_effort: <apiValue>`; bỏ trường khi tắt suy luận. |
 | OpenAI (`/v1/chat/completions`) | `reasoning_effort: <apiValue>`; bỏ trường khi tắt suy luận. |
 
 Nhà cung cấp không nhận `reasoning_effort` thì tắt suy luận cho mô hình đó trong `/admin/models`.
@@ -276,9 +279,10 @@ Luồng chính:
 2. `src/lib/tokens.ts` — cấp/thu hồi token Desktop và khoá API (chỉ lưu băm).
 3. `src/lib/principal.ts` — phân giải cookie phiên, token Desktop hoặc khoá API cho mọi request mô hình.
 4. `src/lib/upstream.ts` — chuyển tiếp OpenAI/Anthropic, đọc usage, bắt frame SSE để tính phí.
-5. `src/lib/model-store.ts` — danh mục mô hình, nhà cung cấp, phân giải endpoint và kiểm tra kết nối.
-6. `src/lib/downloads.ts` — cấu hình bộ cài hiển thị trên `/download`.
-7. `src/lib/admin.ts` — tổng hợp số liệu, quản lý tài khoản, thông báo và nhật ký quản trị.
+5. `src/lib/anthropic-bridge.ts` — dịch Messages ↔ chat completions cho nhà cung cấp chỉ có endpoint OpenAI.
+6. `src/lib/model-store.ts` — danh mục mô hình, nhà cung cấp, phân giải endpoint và kiểm tra kết nối.
+7. `src/lib/downloads.ts` — cấu hình bộ cài hiển thị trên `/download`.
+8. `src/lib/admin.ts` — tổng hợp số liệu, quản lý tài khoản, thông báo và nhật ký quản trị.
 
 ## Bảo mật
 

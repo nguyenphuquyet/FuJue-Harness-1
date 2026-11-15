@@ -7,7 +7,8 @@ import { requestPrincipal, type Principal } from '@/lib/principal'
 import { debitUser, recordUsage } from '@/lib/usage'
 import { totalBalanceUsd } from '@/lib/users'
 import {
-  UpstreamNotConfiguredError, meterSse, passthrough, requestChatCompletion, usageFromOpenAi, type TokenUsage,
+  UpstreamNotConfiguredError, meterSse, passthrough, rejectedPlatformCredential, requestChatCompletion, usageFromOpenAi,
+  type TokenUsage,
 } from '@/lib/upstream'
 
 const schema = z.object({
@@ -90,6 +91,15 @@ export async function POST(request: Request): Promise<Response> {
       return failure(503, error.message, 'upstream_not_configured', 'server_error')
     }
     return failure(502, 'Không kết nối được nhà cung cấp mô hình.', 'upstream_unreachable', 'server_error')
+  }
+
+  if (rejectedPlatformCredential(upstream)) {
+    return failure(
+      502,
+      'Nhà cung cấp mô hình từ chối khoá API của FuJue Platform. Kiểm tra khoá trong trang quản trị.',
+      'upstream_unauthorized',
+      'server_error',
+    )
   }
 
   if (parsed.data.stream === true && upstream.ok && upstream.body !== null) {

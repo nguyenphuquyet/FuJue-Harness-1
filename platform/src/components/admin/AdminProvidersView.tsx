@@ -15,7 +15,8 @@ import { sendAdminJson } from './api'
 /** Deployment defaults shown when a provider leaves a field empty. */
 export interface ProviderFallback {
   readonly chatBaseUrl: string
-  readonly anthropicBaseUrl: string
+  /** Anthropic root configured for the whole deployment, or null when none is. */
+  readonly anthropicBaseUrl: string | null
   readonly keyConfigured: boolean
 }
 
@@ -349,15 +350,17 @@ export function AdminProvidersView({
             </span>
           </div>
           <div className="fj-field fj-field-grid--full">
-            <label htmlFor="provider-anthropic">URL tương thích Anthropic</label>
+            <label htmlFor="provider-anthropic">URL tương thích Anthropic (tuỳ chọn)</label>
             <Input
               id="provider-anthropic"
               value={draft.anthropicBaseUrl}
-              placeholder={fallback.anthropicBaseUrl}
+              placeholder={fallback.anthropicBaseUrl ?? 'Để trống để dùng chuyển đổi OpenAI'}
               onChange={value => setDraft(current => ({ ...current, anthropicBaseUrl: value }))}
             />
             <span className="fj-field-hint">
-              Dùng cho cổng <span className="fj-inline-code">/anthropic</span> mà FuJue Harness Desktop gọi.
+              Điền khi nhà cung cấp có sẵn cổng Anthropic; để trống thì FuJue Platform tự chuyển
+              <span className="fj-inline-code">/anthropic/v1/messages</span> sang
+              <span className="fj-inline-code">/chat/completions</span> của URL OpenAI ở trên.
             </span>
           </div>
           <div className="fj-field fj-field-grid--full">

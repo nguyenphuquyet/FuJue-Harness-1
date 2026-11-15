@@ -202,8 +202,14 @@ print(reply.choices[0].message.content)`}</div>
           <h2>Cổng Anthropic</h2>
           <p>
             Desktop gọi mô hình qua giao thức Anthropic tại{' '}
-            <span className="fj-mono">/anthropic/messages</span>. Cổng này nhận cùng token thiết bị hoặc khoá API và
+            <span className="fj-mono">/anthropic/v1/messages</span>. Cổng này nhận cùng token thiết bị hoặc khoá API và
             ghi chi phí theo đúng mô hình trong thân yêu cầu.
+          </p>
+          <p>
+            Nhà cung cấp chỉ có endpoint OpenAI thì cổng tự chuyển yêu cầu sang{' '}
+            <span className="fj-mono">/chat/completions</span> — nội dung, lời gọi công cụ và luồng sự kiện đều được
+            dịch, nên trong trang quản trị chỉ cần điền một URL và một khoá. Ô URL Anthropic chỉ dùng khi nhà cung cấp
+            có sẵn giao thức này.
           </p>
           <div className="fj-code-block">{`curl https://platform.fujue.ai/anthropic/messages \\
   -H "x-api-key: $FJ_API_KEY" \\

@@ -72,9 +72,15 @@ export function openAiBaseUrl(): string {
   return (process.env.DEEPSEEK_UPSTREAM_URL?.trim() || 'https://api.deepseek.com').replace(/\/+$/, '')
 }
 
-/** Upstream Anthropic-compatible root, without a trailing slash. */
-export function anthropicBaseUrl(): string {
-  return (process.env.DEEPSEEK_ANTHROPIC_BASE_URL?.trim() || 'https://api.deepseek.com/anthropic').replace(/\/+$/, '')
+/**
+ * Upstream Anthropic-compatible root, without a trailing slash.
+ *
+ * @returns the configured root, or null when this deployment reaches every
+ * provider through its OpenAI-compatible endpoint and the gateway translates.
+ */
+export function anthropicBaseUrl(): string | null {
+  const configured = process.env.DEEPSEEK_ANTHROPIC_BASE_URL?.trim()
+  return configured === undefined || configured === '' ? null : configured.replace(/\/+$/, '')
 }
 
 /** Provider credential forwarded by every metered model request. */
