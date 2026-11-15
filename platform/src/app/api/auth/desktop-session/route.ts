@@ -6,6 +6,7 @@
  * ordinary cookie session.
  */
 import { z } from 'zod'
+import { deploymentOrigin } from '@/lib/env'
 import { apiError, json, readJson } from '@/lib/http'
 import { createSession } from '@/lib/session'
 import { userFromAccountToken } from '@/lib/tokens'
@@ -16,6 +17,11 @@ const schema = z.object({
 })
 
 export async function POST(request: Request): Promise<Response> {
+  // A foreign document must not be able to log this browser into a grant it owns.
+  const origin = request.headers.get('origin')
+  if (origin !== null && origin !== deploymentOrigin(request)) {
+    return apiError(403, 'cross_origin', 'Yêu cầu phải xuất phát từ chính FuJue Platform.')
+  }
   const parsed = await readJson(request, schema)
   if (!parsed.ok) return parsed.response
   const user = await userFromAccountToken(parsed.value.token)

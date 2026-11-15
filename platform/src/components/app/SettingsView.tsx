@@ -298,10 +298,10 @@ export function SettingsView({
             type="info"
             showIcon
             style={{ marginTop: 18 }}
-            content="Bản dựng nội bộ chưa bật cổng thanh toán. Liên hệ quản trị viên để cộng tín dụng cho tài khoản."
+            content="Nạp bằng chuyển khoản ngân hàng; quản trị viên cộng số dư sau khi đối soát. Số dư dùng chung cho Playground, API và Desktop."
           />
-          <Button long size="large" style={{ marginTop: 16 }} disabled>
-            Nạp thêm — sắp ra mắt
+          <Button long size="large" style={{ marginTop: 16 }} href="/top_up">
+            Mở trang nạp tiền
           </Button>
         </section>
       </div>

@@ -164,7 +164,7 @@ export function AppShell({ user, children }: { readonly user: ShellUser; readonl
             <div className="fj-dim" style={{ fontSize: 11, marginTop: 4 }}>
               Thưởng ${Number(user.bonusUsd).toFixed(2)} · Nạp ${Number(user.balanceUsd).toFixed(2)}
             </div>
-            <Button size="small" type="primary" long style={{ marginTop: 12 }} href="/app/settings#billing">
+            <Button size="small" type="primary" long style={{ marginTop: 12 }} href="/top_up">
               Nạp thêm
             </Button>
           </div>
