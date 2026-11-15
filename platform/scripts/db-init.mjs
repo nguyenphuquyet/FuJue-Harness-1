@@ -1,10 +1,14 @@
 #!/usr/bin/env node
 /**
- * Create the FuJue Platform schema and seed the demo account.
+ * Create the FuJue Platform schema and seed the owner account.
  *
  *   node scripts/db-init.mjs              schema, then seed
  *   node scripts/db-init.mjs --schema-only
  *   node scripts/db-init.mjs --seed-only
+ *
+ * The owner account comes from PLATFORM_ADMIN_EMAIL, PLATFORM_ADMIN_PASSWORD, and
+ * PLATFORM_ADMIN_NAME, defaulting to quyetguic@gmail.com / quyet12345. The password
+ * is written only when the row is created.
  *
  * The connection comes from DATABASE_URL, or from MYSQL_HOST / MYSQL_PORT /
  * MYSQL_USER / MYSQL_PASSWORD / MYSQL_DATABASE. .env and .env.local in the
@@ -62,116 +66,23 @@ function hashPassword(password) {
   return `scrypt$${salt}$${digest}`
 }
 
-const DEMO_USER_ID = '11111111-1111-4111-8111-111111111111'
-const DEMO_EMAIL = 'demo@fujue.ai'
-const DEMO_PASSWORD = 'fujue123'
-const DEMO_API_KEY = 'fjk_sk_demo0000000000000000000000000000000000'
-const DEMO_KEY_ID = '22222222-2222-4222-8222-222222222222'
+const OWNER_USER_ID = '11111111-1111-4111-8111-111111111111'
+const OWNER_EMAIL = process.env.PLATFORM_ADMIN_EMAIL?.trim() || 'quyetguic@gmail.com'
+const OWNER_PASSWORD = process.env.PLATFORM_ADMIN_PASSWORD ?? 'quyet12345'
+const OWNER_NAME = process.env.PLATFORM_ADMIN_NAME?.trim() || 'QuyetGuic'
 
 async function seed(connection) {
+  // The password is set only when the row is created: re-running the seed must not
+  // reset a password the owner has since changed.
   await connection.execute(
     `INSERT INTO users (id, email, password_hash, name, locale, status, role, balance_usd, bonus_usd)
-     VALUES (?, ?, ?, ?, 'vi', 'active', 'admin', 12.400000, 1.000000)
-     ON DUPLICATE KEY UPDATE name = VALUES(name), locale = VALUES(locale), role = 'admin'`,
-    [DEMO_USER_ID, DEMO_EMAIL, hashPassword(DEMO_PASSWORD), 'Người dùng Demo'],
+     VALUES (?, ?, ?, ?, 'vi', 'active', 'admin', 0, 0)
+     ON DUPLICATE KEY UPDATE name = VALUES(name), locale = VALUES(locale), role = 'admin', status = 'active'`,
+    [OWNER_USER_ID, OWNER_EMAIL, hashPassword(OWNER_PASSWORD), OWNER_NAME],
   )
 
-  await connection.execute(
-    `INSERT INTO api_keys (id, user_id, name, prefix, key_hash)
-     VALUES (?, ?, 'Khoá demo', 'fjk_sk_demo', SHA2(?, 256))
-     ON DUPLICATE KEY UPDATE name = VALUES(name)`,
-    [DEMO_KEY_ID, DEMO_USER_ID, DEMO_API_KEY],
-  )
-
-  const notifications = [
-    {
-      id: '33333333-3333-4333-8333-333333333333',
-      titleVi: 'Chào mừng bạn đến với FuJue Platform',
-      titleEn: 'Welcome to FuJue Platform',
-      bodyVi: 'Tài khoản của bạn đã sẵn sàng. Tạo API key để kết nối FuJue Harness Desktop hoặc gọi API từ ứng dụng của bạn.',
-      bodyEn: 'Your account is ready. Create an API key to connect FuJue Harness Desktop or call the API from your app.',
-      actionVi: 'Mở API key',
-      actionEn: 'Open API keys',
-      style: 'primary',
-      data: JSON.stringify({ href: '/app/keys' }),
-    },
-    {
-      id: '44444444-4444-4444-8444-444444444444',
-      titleVi: 'Tặng 1.00 USD dùng thử',
-      titleEn: '1.00 USD trial credit',
-      bodyVi: 'Số dư thưởng đã được cộng vào tài khoản. Dùng cho mọi mô hình trong Playground hoặc qua API.',
-      bodyEn: 'Trial credit has been added to your account. Use it with any model in the playground or through the API.',
-      actionVi: 'Xem cách dùng',
-      actionEn: 'See how to use it',
-      style: 'secondary',
-      data: JSON.stringify({ href: '/app/docs' }),
-    },
-    {
-      id: '55555555-5555-4555-8555-555555555555',
-      titleVi: 'Đồng bộ với ứng dụng Desktop',
-      titleEn: 'Sync with the desktop app',
-      bodyVi: 'Đăng nhập một lần trên trình duyệt, Desktop sẽ tự nhận phiên và danh sách mô hình từ FuJue Platform.',
-      bodyEn: 'Sign in once in the browser and the desktop app receives the session and model catalog from FuJue Platform.',
-      actionVi: 'Xem hướng dẫn',
-      actionEn: 'Read the guide',
-      style: 'primary',
-      data: JSON.stringify({ href: '/app/docs' }),
-    },
-  ]
-  for (const item of notifications) {
-    await connection.execute(
-      `INSERT INTO notifications
-         (id, title_vi, title_en, body_vi, body_en, action_label_vi, action_label_en, action_style, audience, data_json)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'all', ?)
-       ON DUPLICATE KEY UPDATE
-         title_vi = VALUES(title_vi), title_en = VALUES(title_en),
-         body_vi = VALUES(body_vi), body_en = VALUES(body_en),
-         action_label_vi = VALUES(action_label_vi), action_label_en = VALUES(action_label_en),
-         action_style = VALUES(action_style), data_json = VALUES(data_json)`,
-      [item.id, item.titleVi, item.titleEn, item.bodyVi, item.bodyEn, item.actionVi, item.actionEn, item.style, item.data],
-    )
-  }
-
-  const [[countRow]] = await connection.query(
-    'SELECT COUNT(*) AS total FROM usage_events WHERE user_id = ?',
-    [DEMO_USER_ID],
-  )
-  if (Number(countRow.total) === 0) {
-    const models = [
-      { id: 'deepseek-flash', input: 0.14, output: 0.56, weight: 0.7 },
-      { id: 'deepseek-v4-pro', input: 0.55, output: 2.2, weight: 0.3 },
-    ]
-    const sources = ['playground', 'api', 'desktop']
-    for (let day = 13; day >= 0; day -= 1) {
-      const requests = 3 + ((day * 7) % 9)
-      for (let index = 0; index < requests; index += 1) {
-        const model = Math.random() < models[0].weight ? models[0] : models[1]
-        const promptTokens = 400 + Math.floor(Math.random() * 2600)
-        const completionTokens = 120 + Math.floor(Math.random() * 900)
-        const cost = (promptTokens * model.input + completionTokens * model.output) / 1_000_000
-        await connection.execute(
-          `INSERT INTO usage_events
-             (user_id, api_key_id, model, prompt_tokens, completion_tokens, total_tokens, cost_usd, source, created_at)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, DATE_SUB(NOW(3), INTERVAL ? DAY) - INTERVAL ? MINUTE)`,
-          [
-            DEMO_USER_ID,
-            index % 3 === 0 ? DEMO_KEY_ID : null,
-            model.id,
-            promptTokens,
-            completionTokens,
-            promptTokens + completionTokens,
-            cost.toFixed(8),
-            sources[index % sources.length],
-            day,
-            index * 17,
-          ],
-        )
-      }
-    }
-  }
-
-  console.log(`seed: demo account ${DEMO_EMAIL} / ${DEMO_PASSWORD}`)
-  console.log(`seed: demo API key ${DEMO_API_KEY}`)
+  console.log(`seed: admin account ${OWNER_EMAIL}`)
+  console.log('seed: change the password after the first sign-in')
 }
 
 async function migrate(connection) {

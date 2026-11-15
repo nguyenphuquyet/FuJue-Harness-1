@@ -39,7 +39,7 @@ Platform phục vụ đúng giao thức mà FuJue Harness Desktop đang dùng, n
 cd platform
 npm install
 cp .env.example .env.local   # rồi sửa thông tin kết nối
-npm run db:init              # tạo database, bảng và dữ liệu demo
+npm run db:init              # tạo database, bảng và tài khoản chủ sở hữu
 npm run dev                  # http://localhost:3000
 ```
 
@@ -58,23 +58,16 @@ npm run typecheck
 
 ### Database
 
-`npm run db:init` đọc `DATABASE_URL` (dạng `mysql://user:pass@host:3306/fujue_platform`) hoặc các biến rời `MYSQL_HOST`, `MYSQL_PORT`, `MYSQL_USER`, `MYSQL_PASSWORD`, `MYSQL_DATABASE`. Script tạo database nếu chưa có, áp `db/schema.sql` (idempotent) rồi seed dữ liệu demo.
+`npm run db:init` đọc `DATABASE_URL` (dạng `mysql://user:pass@host:3306/fujue_platform`) hoặc các biến rời `MYSQL_HOST`, `MYSQL_PORT`, `MYSQL_USER`, `MYSQL_PASSWORD`, `MYSQL_DATABASE`. Script tạo database nếu chưa có, áp `db/schema.sql` (idempotent) rồi tạo tài khoản chủ sở hữu.
 
 ```sh
 npm run db:init -- --schema-only   # chỉ tạo bảng
-npm run db:init -- --seed-only     # chỉ seed lại
+npm run db:init -- --seed-only     # chỉ tạo lại tài khoản chủ sở hữu
 ```
 
-Tài khoản demo sau khi seed:
+Tài khoản chủ sở hữu lấy từ `PLATFORM_ADMIN_EMAIL`, `PLATFORM_ADMIN_PASSWORD`, `PLATFORM_ADMIN_NAME`; mặc định `quyetguic@gmail.com` / `quyet12345`, vai trò `admin`, số dư 0.
 
-| | |
-| --- | --- |
-| Email | `demo@fujue.ai` |
-| Mật khẩu | `fujue123` |
-| Vai trò | `admin` — mở được `/admin` |
-| API key | `fjk_sk_demo0000000000000000000000000000000000` |
-
-> Dữ liệu demo chỉ dành cho phát triển. Đổi mật khẩu và thu hồi khoá demo trước khi triển khai thật.
+> Mật khẩu chỉ được ghi khi tài khoản chưa tồn tại, nên chạy lại seed không đặt lại mật khẩu bạn đã đổi. Đổi mật khẩu ngay sau lần đăng nhập đầu tiên và không để mật khẩu mặc định trên bản công khai.
 
 ### Chuyển nội dung giữa các bản triển khai
 
@@ -99,6 +92,7 @@ node scripts/apply-content.mjs đường/dẫn/tới/seed-content.json
 | `HARNESS_RELEASES_URL` | không | Trang phát hành mặc định cho các bộ cài chưa có URL trực tiếp. |
 | `ALLOWED_REDIRECT_ORIGINS` | không | Danh sách origin HTTPS (phẩy) được phép nhận mã uỷ quyền ngoài origin của Platform. |
 | `NODE_ENV` | không | `production` bật cờ `Secure` cho cookie phiên. |
+| `PLATFORM_ADMIN_EMAIL` / `PLATFORM_ADMIN_PASSWORD` / `PLATFORM_ADMIN_NAME` | không | Tài khoản chủ sở hữu do `db:init` tạo; mặc định `quyetguic@gmail.com` / `quyet12345` / `QuyetGuic`. |
 
 ## Kết nối FuJue Harness Desktop
 
@@ -247,7 +241,7 @@ Mọi thay đổi ghi vào `admin_audit`. API quản trị trả `401` khi chưa
 ```
 platform/
   db/schema.sql              Bảng MySQL và chỉ mục
-  scripts/db-init.mjs        Tạo database + seed demo
+  scripts/db-init.mjs        Tạo database + tài khoản chủ sở hữu
   src/app/                   Route (App Router)
     app/                     Bảng điều khiển sau đăng nhập
     admin/                   Bảng quản trị (mô hình, nhà cung cấp, người dùng…)

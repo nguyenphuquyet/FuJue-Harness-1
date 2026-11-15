@@ -72,9 +72,8 @@ export function DocsContent() {
             </div>
           </div>
           <p style={{ marginTop: 18 }}>
-            Bản dựng demo có sẵn tài khoản <span className="fj-mono">demo@fujue.ai</span> /{' '}
-            <span className="fj-mono">fujue123</span> và khoá{' '}
-            <span className="fj-mono">fjk_sk_demo0000000000000000000000000000000000</span>.
+            Mọi tài khoản đều tạo khoá API riêng ở <Link href="/app/keys">trang API key</Link>; khoá chỉ hiển thị một
+            lần ngay sau khi tạo.
           </p>
         </section>
 

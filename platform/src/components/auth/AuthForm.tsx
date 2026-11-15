@@ -117,15 +117,11 @@ export function AuthForm({ mode, next }: { readonly mode: AuthMode; readonly nex
         )}
       </p>
 
-      {mode === 'login' ? (
-        <p className="fj-dim" style={{ marginTop: 16, fontSize: 12, textAlign: 'center' }}>
-          Tài khoản demo: <span className="fj-mono">demo@fujue.ai</span> · <span className="fj-mono">fujue123</span>
-        </p>
-      ) : (
+      {mode === 'register' ? (
         <p className="fj-dim" style={{ marginTop: 16, fontSize: 12, textAlign: 'center' }}>
           Bằng việc tạo tài khoản, bạn đồng ý sử dụng hợp lý và chính sách dữ liệu của FuJue Platform.
         </p>
-      )}
+      ) : null}
     </div>
   )
 }
