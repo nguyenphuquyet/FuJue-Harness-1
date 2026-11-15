@@ -1,0 +1,29 @@
+{
+  "name": "fujue-platform",
+  "version": "0.1.0",
+  "private": true,
+  "description": "FuJue Platform: accounts, desktop sign-in, API keys, usage metering, and the model gateway for FuJue Harness.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "next typegen && tsc --noEmit",
+    "db:init": "node scripts/db-init.mjs",
+    "db:seed": "node scripts/db-init.mjs --seed-only"
+  },
+  "dependencies": {
+    "@arco-design/web-react": "2.66.18",
+    "dayjs": "^1.11.13",
+    "mysql2": "^3.24.6",
+    "next": "16.4.6",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "typescript": "^5.9.3"
+  }
+}
