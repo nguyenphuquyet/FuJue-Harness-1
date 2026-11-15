@@ -1,21 +1,16 @@
 /** Anthropic-compatible proxy (`/anthropic/messages`, `/anthropic/files/...`) used by the desktop account route. */
 import { json } from '@/lib/http'
 import { defaultUpstream, findServedModel, upstreamForModel } from '@/lib/model-store'
-import { estimateCostUsd } from '@/lib/models'
+import { estimateCostUsd, resolveReasoning } from '@/lib/models'
 import { requestPrincipal } from '@/lib/principal'
 import { debitUser, recordUsage } from '@/lib/usage'
 import {
-  UpstreamNotConfiguredError, forwardAnthropic, meterSse, passthrough, usageFromAnthropic, type TokenUsage,
-  type UpstreamEndpoint,
+  UpstreamNotConfiguredError, anthropicReasoningRequest, forwardAnthropic, meterSse, passthrough, usageFromAnthropic,
+  withAnthropicReasoning, type TokenUsage, type UpstreamEndpoint,
 } from '@/lib/upstream'
 
 interface RouteContext {
   readonly params: Promise<{ path: string[] }>
-}
-
-interface AnthropicBody {
-  readonly model?: unknown
-  readonly stream?: unknown
 }
 
 async function handler(request: Request, context: RouteContext): Promise<Response> {
@@ -28,11 +23,14 @@ async function handler(request: Request, context: RouteContext): Promise<Respons
   const body = request.method === 'GET' || request.method === 'HEAD' ? null : await request.arrayBuffer()
   let model: string | null = null
   let streaming = false
+  let message: Record<string, unknown> | null = null
   if (body !== null) {
     try {
-      const parsed = JSON.parse(Buffer.from(body).toString('utf8')) as AnthropicBody
+      const parsed = JSON.parse(Buffer.from(body).toString('utf8')) as Record<string, unknown>
       if (typeof parsed.model === 'string') model = parsed.model
       streaming = parsed.stream === true
+      // File uploads are JSON-free; only a Messages request carries a message list.
+      if (Array.isArray(parsed.messages)) message = parsed
     } catch {
       // Non-JSON bodies (file uploads) are forwarded without metering a model.
     }
@@ -50,9 +48,13 @@ async function handler(request: Request, context: RouteContext): Promise<Respons
     return json({ type: 'error', error: { type: 'api_error', message: 'Upstream provider is unreachable.' } }, 502)
   }
 
+  const forwarded: Uint8Array | null = served !== undefined && message !== null
+    ? Buffer.from(JSON.stringify(withAnthropicReasoning(message, resolveReasoning(served, anthropicReasoningRequest(message)).apiValue)))
+    : body === null ? null : new Uint8Array(body)
+
   let upstream: Response
   try {
-    upstream = await forwardAnthropic(endpoint, segments.join('/'), request, body, new URL(request.url).search)
+    upstream = await forwardAnthropic(endpoint, segments.join('/'), request, forwarded, new URL(request.url).search)
   } catch {
     return json({ type: 'error', error: { type: 'api_error', message: 'Upstream provider is unreachable.' } }, 502)
   }

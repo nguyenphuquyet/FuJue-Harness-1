@@ -2,7 +2,7 @@
 import { z } from 'zod'
 import { apiError, readJson } from '@/lib/http'
 import { findServedModel, upstreamForModel } from '@/lib/model-store'
-import { estimateCostUsd, upstreamModelId } from '@/lib/models'
+import { estimateCostUsd, resolveReasoning, upstreamModelId } from '@/lib/models'
 import { sessionUser } from '@/lib/session'
 import { debitUser, recordUsage } from '@/lib/usage'
 import { totalBalanceUsd } from '@/lib/users'
@@ -41,6 +41,7 @@ export async function POST(request: Request): Promise<Response> {
       messages: parsed.value.messages,
       temperature: parsed.value.temperature,
       maxTokens: parsed.value.maxTokens,
+      reasoningEffort: resolveReasoning(served, undefined).apiValue,
     })
   } catch (error) {
     if (error instanceof UpstreamNotConfiguredError) {

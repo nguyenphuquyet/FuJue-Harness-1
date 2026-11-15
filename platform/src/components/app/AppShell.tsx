@@ -131,13 +131,15 @@ export function AppShell({ user, children }: { readonly user: ShellUser; readonl
 
   return (
     <div className="fj-shell">
-      <button
-        type="button"
-        className="fj-scrim"
-        aria-label="Đóng điều hướng"
-        onClick={nav.close}
-        tabIndex={-1}
-      />
+      {nav.open ? (
+        <button
+          type="button"
+          className="fj-scrim"
+          aria-label="Đóng điều hướng"
+          onClick={nav.close}
+          tabIndex={-1}
+        />
+      ) : null}
       <aside
         id="fj-sidebar"
         className={`fj-sidebar${nav.open ? ' fj-sidebar--open' : ''}`}

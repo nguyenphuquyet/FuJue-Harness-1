@@ -49,8 +49,9 @@ export function OverviewView({
     {
       title: 'Mô hình',
       dataIndex: 'modelName',
+      ellipsis: true,
       render: (_value, entry) => (
-        <div>
+        <div style={{ minWidth: 0 }}>
           <div style={{ fontWeight: 550 }}>{entry.modelName}</div>
           <div className="fj-dim" style={{ fontSize: 11, fontFamily: 'var(--fj-mono)' }}>
             {entry.model}
@@ -74,14 +75,15 @@ export function OverviewView({
     {
       title: 'Chi phí',
       dataIndex: 'costUsd',
-      width: 90,
+      width: 100,
       align: 'right',
       render: value => formatUsd(Number(value)),
     },
     {
       title: 'Thời điểm',
       dataIndex: 'createdAt',
-      width: 140,
+      width: 150,
+      ellipsis: true,
       render: value => <span className="fj-dim" style={{ fontSize: 12 }}>{formatDateTime(String(value))}</span>,
     },
   ]
@@ -180,85 +182,83 @@ export function OverviewView({
         )}
       </section>
 
+      <section className="fj-panel">
+        <div className="fj-panel-head">
+          <div>
+            <h2>Yêu cầu gần đây</h2>
+            <p>Mọi nguồn: Playground, API và Desktop</p>
+          </div>
+          <Button size="small" href="/app/usage">
+            Xem tất cả
+          </Button>
+        </div>
+        {summary.recent.length === 0 ? (
+          <Empty description="Chưa có yêu cầu" />
+        ) : (
+          <Table
+            data={summary.recent.slice(0, 6)}
+            columns={columns}
+            rowKey="id"
+            pagination={false}
+            size="small"
+            border={false}
+          />
+        )}
+      </section>
+
       <div className="fj-grid fj-grid--2" style={{ alignItems: 'start' }}>
         <section className="fj-panel">
           <div className="fj-panel-head">
             <div>
-              <h2>Yêu cầu gần đây</h2>
-              <p>Mọi nguồn: Playground, API và Desktop</p>
+              <h2>Khoá API</h2>
+              <p>{activeKeys.length} khoá đang hoạt động</p>
             </div>
-            <Button size="small" href="/app/usage">
-              Xem tất cả
+            <Button size="small" href="/app/keys">
+              Quản lý
             </Button>
           </div>
-          {summary.recent.length === 0 ? (
-            <Empty description="Chưa có yêu cầu" />
+          {keys.length === 0 ? (
+            <Empty description="Chưa có khoá nào" />
           ) : (
-            <Table
-              data={summary.recent.slice(0, 6)}
-              columns={columns}
-              rowKey="id"
-              pagination={false}
-              size="small"
-              border={false}
-            />
+            keys.slice(0, 3).map(key => (
+              <div key={key.id} className="fj-list-row">
+                <div className="fj-list-title">
+                  <IconLock style={{ color: 'var(--fj-accent)' }} />
+                  <div>
+                    <div>{key.name}</div>
+                    <div className="fj-dim" style={{ fontSize: 11 }}>
+                      {key.revokedAt === null ? 'Đang hoạt động' : 'Đã thu hồi'}
+                    </div>
+                  </div>
+                </div>
+                <span className="fj-key-chip">{key.prefix}…</span>
+              </div>
+            ))
           )}
         </section>
 
-        <div className="fj-stack">
-          <section className="fj-panel">
-            <div className="fj-panel-head">
-              <div>
-                <h2>Khoá API</h2>
-                <p>{activeKeys.length} khoá đang hoạt động</p>
-              </div>
-              <Button size="small" href="/app/keys">
-                Quản lý
-              </Button>
+        <section className="fj-panel">
+          <div className="fj-panel-head">
+            <div>
+              <h2>Bắt đầu nhanh</h2>
+              <p>Ba việc nên làm tiếp theo</p>
             </div>
-            {keys.length === 0 ? (
-              <Empty description="Chưa có khoá nào" />
-            ) : (
-              keys.slice(0, 3).map(key => (
-                <div key={key.id} className="fj-list-row">
-                  <div className="fj-list-title">
-                    <IconLock style={{ color: 'var(--fj-accent)' }} />
-                    <div>
-                      <div>{key.name}</div>
-                      <div className="fj-dim" style={{ fontSize: 11 }}>
-                        {key.revokedAt === null ? 'Đang hoạt động' : 'Đã thu hồi'}
-                      </div>
-                    </div>
-                  </div>
-                  <span className="fj-key-chip">{key.prefix}…</span>
-                </div>
-              ))
-            )}
-          </section>
-
-          <section className="fj-panel">
-            <div className="fj-panel-head">
-              <div>
-                <h2>Bắt đầu nhanh</h2>
-                <p>Ba việc nên làm tiếp theo</p>
-              </div>
-            </div>
-            <div className="fj-quick">
-              <Link href="/app/keys">
-                <strong>Tạo khoá API</strong>
-                <span>Gọi mô hình từ ứng dụng của bạn</span>
-              </Link>
-              <Link href="/app/playground">
-                <strong>Thử mô hình</strong>
-                <span>So sánh Flash và Pro</span>
-              </Link>
-              <Link href="/app/docs#desktop">
-                <strong>Nối Desktop</strong>
-                <span>Cấu hình platformOrigin</span>
-              </Link>
-            </div>
-          </section>
-        </div>
+          </div>
+          <div className="fj-quick">
+            <Link href="/app/keys">
+              <strong>Tạo khoá API</strong>
+              <span>Gọi mô hình từ ứng dụng của bạn</span>
+            </Link>
+            <Link href="/app/playground">
+              <strong>Thử mô hình</strong>
+              <span>So sánh Flash và Pro</span>
+            </Link>
+            <Link href="/app/docs#desktop">
+              <strong>Nối Desktop</strong>
+              <span>Cấu hình platformOrigin</span>
+            </Link>
+          </div>
+        </section>
       </div>
     </>
   )

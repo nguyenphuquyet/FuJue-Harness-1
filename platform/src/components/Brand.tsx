@@ -9,7 +9,7 @@ import Link from 'next/link'
 export function Brand({ compact = false }: { readonly compact?: boolean }) {
   return (
     <Link href="/" className="fj-brand" aria-label="FuJue Platform">
-      <span className="fj-brand-mark">F</span>
+      <span className="fj-brand-mark" aria-hidden="true" />
       {compact ? null : (
         <span className="fj-brand-text">
           FuJue <span>Platform</span>

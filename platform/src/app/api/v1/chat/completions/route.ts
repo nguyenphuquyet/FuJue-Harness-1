@@ -2,7 +2,7 @@
 import { z } from 'zod'
 import { json } from '@/lib/http'
 import { findServedModel, upstreamForModel } from '@/lib/model-store'
-import { estimateCostUsd, upstreamModelId, type PlatformModel } from '@/lib/models'
+import { estimateCostUsd, resolveReasoning, upstreamModelId, type PlatformModel } from '@/lib/models'
 import { requestPrincipal, type Principal } from '@/lib/principal'
 import { debitUser, recordUsage } from '@/lib/usage'
 import { totalBalanceUsd } from '@/lib/users'
@@ -23,6 +23,8 @@ const schema = z.object({
     .max(500),
   temperature: z.number().min(0).max(2).optional(),
   max_tokens: z.number().int().min(1).max(65_536).optional(),
+  // Any level id is accepted; the model policy clamps unknown values to its default.
+  reasoning_effort: z.string().min(1).max(40).optional(),
   stream: z.boolean().optional(),
 })
 
@@ -79,6 +81,7 @@ export async function POST(request: Request): Promise<Response> {
         messages: parsed.data.messages,
         temperature: parsed.data.temperature,
         maxTokens: parsed.data.max_tokens,
+        reasoningEffort: resolveReasoning(served, parsed.data.reasoning_effort).apiValue,
       },
       parsed.data.stream === true,
     )

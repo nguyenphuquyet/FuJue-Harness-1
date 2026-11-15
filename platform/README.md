@@ -11,6 +11,7 @@ Platform phục vụ đúng giao thức mà FuJue Harness Desktop đang dùng, n
 - **Playground** — chọn mô hình, system prompt, temperature, độ dài tối đa; mỗi lượt hiện token và chi phí.
 - **Đo lường** — token vào/ra, chi phí, phân bổ theo ngày, mô hình, khoá và nguồn gọi (Playground / API / Desktop).
 - **Cổng mô hình** — OpenAI-compatible (`/v1/chat/completions`) cho ứng dụng bất kỳ và Anthropic-compatible (`/anthropic/*`) cho Desktop.
+- **Suy luận theo mô hình** — bật/tắt và tự đặt danh sách mức (mã + giá trị API) cùng mức mặc định trong `/admin/models`; cổng mô hình ép đúng chính sách đó cho cả hai giao thức.
 - **Thông báo trong app** — danh sách, nội dung, sự kiện hiển thị/CTA/đóng, song ngữ Việt–Anh.
 - **Quản lý thiết bị** — xem và thu hồi từng token Desktop, hoặc thu hồi toàn bộ.
 - **Bảng quản trị** — danh mục mô hình, nhà cung cấp bên thứ ba (URL + khoá API, kiểm tra kết nối), tài khoản, sử dụng toàn nền tảng, thông báo Desktop, nhật ký quản trị và cấu hình trang tải ứng dụng.
@@ -175,6 +176,29 @@ Danh mục nằm trong bảng `models` và được quản lý tại `/admin/mod
 
 Mỗi mô hình trỏ tới một nhà cung cấp trong bảng `providers` (`chat_base_url`, `anthropic_base_url`, `api_key`). Nhà cung cấp bị tắt hoặc thiếu khoá sẽ trả `503` cho các mô hình dùng nó; mô hình không có nhà cung cấp quay về `DEEPSEEK_*`. Khoá nhà cung cấp chỉ được ghi, không bao giờ trả lại qua API — giao diện chỉ thấy bốn ký tự cuối.
 
+Id mô hình nhận cả dạng có namespace như `deepseek/deepseek-v4.1-flash-free`; đặt id nhà cung cấp riêng ở trường **Id phía nhà cung cấp** khi hai bên khác nhau.
+
+### Suy luận
+
+Mỗi mô hình có ba cột chính sách: `reasoning_enabled`, `reasoning_levels` (JSON các cặp `id`/`apiValue`) và `reasoning_default` (id của mức mặc định). Trang `/admin/models` sửa chúng bằng công tắc **Bật suy luận**, danh sách **Các mức suy luận cho phép** (mỗi dòng một mã và giá trị API, thêm/bớt tuỳ ý) và **Mức mặc định**.
+
+Mức `off` luôn có trong danh sách và tắt suy luận, nên `apiValue` của nó để trống. Các mức còn lại gửi đúng `apiValue` cho nhà cung cấp, ví dụ `low`, `medium`, `high`, `max` hoặc `minimal` tuỳ nhà cung cấp.
+
+Cổng mô hình áp chính sách trước khi gọi nhà cung cấp:
+
+- Mô hình tắt suy luận luôn chạy `off`, kể cả khi client gửi mức khác.
+- Client luôn được phép tắt suy luận; mã mức không nằm trong danh sách cho phép bị đưa về mức mặc định.
+- Thiếu mức trong yêu cầu thì dùng mức mặc định.
+
+Định dạng trên đường truyền:
+
+| Giao thức | Trường gửi đi |
+| --- | --- |
+| Anthropic (`/anthropic/messages`) | `thinking: { type: 'disabled' \| 'enabled' }` và `output_config: { effort: <apiValue> }` (bỏ `output_config` khi tắt suy luận). |
+| OpenAI (`/v1/chat/completions`) | `reasoning_effort: <apiValue>`; bỏ trường khi tắt suy luận. |
+
+Nhà cung cấp không nhận `reasoning_effort` thì tắt suy luận cho mô hình đó trong `/admin/models`.
+
 ### Đo lường và số dư
 
 - Mỗi yêu cầu hoàn tất ghi một dòng `usage_events` với model, token vào/ra và chi phí.
@@ -199,7 +223,7 @@ Tài khoản có `role = 'admin'` mở được `/admin`. Trang tổng quan tổ
 
 | Trang | Chức năng |
 | --- | --- |
-| `/admin/models` | Thêm, sửa, tắt, xoá mô hình; giá, ngữ cảnh, năng lực, nhãn và ánh xạ nhà cung cấp. |
+| `/admin/models` | Thêm, sửa, tắt, xoá mô hình; giá, ngữ cảnh, năng lực, nhãn, ánh xạ nhà cung cấp và chính sách suy luận. |
 | `/admin/providers` | URL OpenAI/Anthropic, khoá API ghi-một-chiều và kiểm tra kết nối. |
 | `/admin/users` | Vai trò, khoá đăng nhập, cấp số dư và mức sử dụng từng tài khoản. Không thể tự hạ quyền hoặc tự khoá. |
 | `/admin/usage` | Chi phí, token và phân bổ theo mô hình, tài khoản trong 7–90 ngày. |

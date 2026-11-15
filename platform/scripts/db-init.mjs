@@ -186,6 +186,50 @@ async function migrate(connection) {
     console.log('db:init: added users.role')
   }
 
+  const [reasoningColumns] = await connection.query(
+    `SELECT COLUMN_NAME FROM information_schema.COLUMNS
+     WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'models'
+       AND COLUMN_NAME IN ('reasoning_enabled', 'reasoning_levels', 'reasoning_default')`,
+  )
+  if (reasoningColumns.length !== 0 && reasoningColumns.length !== 3) {
+    throw new Error('models has a partial reasoning column set; restore the missing columns by hand')
+  }
+  if (reasoningColumns.length === 0) {
+    await connection.query(
+      `ALTER TABLE models
+         ADD COLUMN reasoning_enabled TINYINT(1) NOT NULL DEFAULT 0 AFTER upstream_id,
+         ADD COLUMN reasoning_levels TEXT NOT NULL AFTER reasoning_enabled,
+         ADD COLUMN reasoning_default VARCHAR(40) NOT NULL DEFAULT 'off' AFTER reasoning_levels`,
+    )
+    // Rows created before the columns existed start from the code catalog policy.
+    await connection.query(
+      "UPDATE models SET reasoning_enabled = 1, reasoning_default = 'high' WHERE id = 'deepseek-v4-pro'",
+    )
+    await connection.query("UPDATE models SET reasoning_enabled = 1 WHERE id = 'deepseek-flash'")
+    console.log('db:init: added models reasoning columns')
+  }
+
+  const [levelColumns] = await connection.query(
+    `SELECT DATA_TYPE FROM information_schema.COLUMNS
+     WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'models' AND COLUMN_NAME = 'reasoning_levels'`,
+  )
+  if (levelColumns.length === 1 && String(levelColumns[0].DATA_TYPE).toLowerCase() !== 'text') {
+    // Level rows became editable id/API-value pairs, so the column stores JSON.
+    await connection.query('ALTER TABLE models MODIFY COLUMN reasoning_levels TEXT NOT NULL')
+    await connection.query("ALTER TABLE models MODIFY COLUMN reasoning_default VARCHAR(40) NOT NULL DEFAULT 'off'")
+    const levels = JSON.stringify([
+      { id: 'off', apiValue: '' },
+      { id: 'low', apiValue: 'low' },
+      { id: 'medium', apiValue: 'medium' },
+      { id: 'high', apiValue: 'high' },
+    ])
+    const [legacy] = await connection.query("SELECT id FROM models WHERE reasoning_levels NOT LIKE '[%'")
+    for (const row of legacy) {
+      await connection.query('UPDATE models SET reasoning_levels = ? WHERE id = ?', [levels, row.id])
+    }
+    console.log(`db:init: converted ${legacy.length} model reasoning policies to JSON levels`)
+  }
+
   const [metaColumns] = await connection.query(
     `SELECT DATA_TYPE FROM information_schema.COLUMNS
      WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'platform_meta' AND COLUMN_NAME = 'meta_value'`,

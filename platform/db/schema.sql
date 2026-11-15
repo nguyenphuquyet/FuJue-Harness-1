@@ -164,6 +164,9 @@ CREATE TABLE IF NOT EXISTS models (
   enabled TINYINT(1) NOT NULL DEFAULT 1,
   provider_id VARCHAR(64) NULL,
   upstream_id VARCHAR(120) NULL,
+  reasoning_enabled TINYINT(1) NOT NULL DEFAULT 0,
+  reasoning_levels TEXT NOT NULL,
+  reasoning_default VARCHAR(40) NOT NULL DEFAULT 'off',
   sort_order INT NOT NULL DEFAULT 0,
   created_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
   updated_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
@@ -184,5 +187,5 @@ CREATE TABLE IF NOT EXISTS admin_audit (
   CONSTRAINT admin_audit_actor_fk FOREIGN KEY (actor_id) REFERENCES users (id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO platform_meta (meta_key, meta_value) VALUES ('schema_version', '2')
+INSERT INTO platform_meta (meta_key, meta_value) VALUES ('schema_version', '3')
   ON DUPLICATE KEY UPDATE meta_value = VALUES(meta_value);

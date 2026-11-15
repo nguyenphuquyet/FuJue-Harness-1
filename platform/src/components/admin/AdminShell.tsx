@@ -109,7 +109,9 @@ export function AdminShell({ email, children }: { readonly email: string; readon
 
   return (
     <div className="fj-shell">
-      <button type="button" className="fj-scrim" aria-label="Đóng điều hướng" onClick={nav.close} tabIndex={-1} />
+      {nav.open ? (
+        <button type="button" className="fj-scrim" aria-label="Đóng điều hướng" onClick={nav.close} tabIndex={-1} />
+      ) : null}
       <aside id="fj-admin-sidebar" className={`fj-sidebar${nav.open ? ' fj-sidebar--open' : ''}`}>
         <div className="fj-sidebar-top">
           <Brand />

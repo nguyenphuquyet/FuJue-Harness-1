@@ -7,8 +7,8 @@ import type { TableColumnProps } from '@arco-design/web-react'
 import { IconDelete, IconEdit, IconPlus, IconRobot } from '@arco-design/web-react/icon'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import type { PlatformModel } from '@/lib/models'
-import { formatPrice } from '@/lib/models'
+import type { PlatformModel, ReasoningLevel } from '@/lib/models'
+import { DEFAULT_REASONING_LEVELS, formatPrice } from '@/lib/models'
 import { formatTokens } from '@/lib/format'
 import { sendAdminJson } from './api'
 
@@ -32,7 +32,28 @@ interface ModelDraft {
   enabled: boolean
   providerId: string
   upstreamId: string
+  reasoningEnabled: boolean
+  reasoningLevels: ReasoningLevel[]
+  reasoningDefault: string
   sortOrder: number
+}
+
+const REASONING_LEVEL_OPTIONS: readonly { readonly value: string; readonly label: string }[] = [
+  { value: 'off', label: 'off · tắt suy luận' },
+  { value: 'low', label: 'low' },
+  { value: 'medium', label: 'medium' },
+  { value: 'high', label: 'high' },
+  { value: 'max', label: 'max' },
+]
+
+/**
+ * Readable label for one level id.
+ *
+ * @param id - level id stored on the model.
+ * @returns the Vietnamese label for `off`, otherwise the id itself.
+ */
+function levelLabel(id: string): string {
+  return id === 'off' ? 'Tắt suy luận' : id
 }
 
 function draftOf(model: PlatformModel | null): ModelDraft {
@@ -55,6 +76,9 @@ function draftOf(model: PlatformModel | null): ModelDraft {
       enabled: true,
       providerId: '',
       upstreamId: '',
+      reasoningEnabled: true,
+      reasoningLevels: DEFAULT_REASONING_LEVELS.map(level => ({ ...level })),
+      reasoningDefault: 'off',
       sortOrder: 100,
     }
   }
@@ -76,6 +100,9 @@ function draftOf(model: PlatformModel | null): ModelDraft {
     enabled: model.enabled,
     providerId: model.providerId ?? '',
     upstreamId: model.upstreamId ?? '',
+    reasoningEnabled: model.reasoning.enabled,
+    reasoningLevels: model.reasoning.levels.map(level => ({ ...level })),
+    reasoningDefault: model.reasoning.default,
     sortOrder: model.sortOrder,
   }
 }
@@ -118,12 +145,37 @@ export function AdminModelsView({
       setError('Nhập tên hiển thị của mô hình.')
       return
     }
-    if (editing === null && !/^[a-z0-9][a-z0-9._-]*$/.test(draft.id)) {
-      setError('Id chỉ gồm chữ thường, số, dấu chấm, gạch ngang hoặc gạch dưới.')
+    if (editing === null && !/^[a-z0-9][a-z0-9._:/-]*$/.test(draft.id)) {
+      setError('Id bắt đầu bằng chữ thường hoặc số, chỉ gồm chữ thường, số và các dấu . _ - / :')
       return
     }
     if (draft.inputModalities.length === 0) {
       setError('Chọn ít nhất một loại đầu vào.')
+      return
+    }
+    const levels = draft.reasoningLevels.map(level => ({ id: level.id.trim(), apiValue: level.apiValue.trim() }))
+    if (levels.some(level => level.id === '')) {
+      setError('Mỗi mức suy luận cần một mã, ví dụ off, low hoặc high.')
+      return
+    }
+    if (new Set(levels.map(level => level.id)).size !== levels.length) {
+      setError('Mã mức suy luận bị trùng. Mỗi mức cần một mã riêng.')
+      return
+    }
+    if (!levels.some(level => level.id === 'off')) {
+      setError('Danh sách mức phải có mức off để khách hàng tắt suy luận.')
+      return
+    }
+    if (levels.some(level => level.id !== 'off' && level.apiValue === '')) {
+      setError('Nhập giá trị API cho mỗi mức suy luận đã thêm.')
+      return
+    }
+    if (draft.reasoningEnabled && levels.every(level => level.id === 'off')) {
+      setError('Thêm ít nhất một mức suy luận khi bật suy luận.')
+      return
+    }
+    if (!levels.some(level => level.id === draft.reasoningDefault)) {
+      setError('Mức mặc định phải nằm trong danh sách mức suy luận.')
       return
     }
     const badgeVi = draft.badgeTextVi.trim()
@@ -145,6 +197,9 @@ export function AdminModelsView({
       enabled: draft.enabled,
       providerId: draft.providerId === '' ? null : draft.providerId,
       upstreamId: draft.upstreamId.trim() === '' ? null : draft.upstreamId.trim(),
+      reasoningEnabled: draft.reasoningEnabled,
+      reasoningLevels: levels,
+      reasoningDefault: draft.reasoningEnabled ? draft.reasoningDefault : 'off',
       sortOrder: draft.sortOrder,
     }
     setSaving(true)
@@ -239,6 +294,13 @@ export function AdminModelsView({
               Đề xuất
             </Tag>
           ) : null}
+          {model.reasoning.enabled ? (
+            <Tag size="small">Suy luận: {levelLabel(model.reasoning.default)}</Tag>
+          ) : (
+            <Tag size="small" color="gray">
+              Không suy luận
+            </Tag>
+          )}
         </div>
       ),
     },
@@ -499,6 +561,128 @@ export function AdminModelsView({
               placeholder="Bỏ trống để dùng id nền tảng"
               onChange={value => setDraft(current => ({ ...current, upstreamId: value }))}
             />
+          </div>
+          <div className="fj-field">
+            <label>Bật suy luận</label>
+            <Switch
+              checked={draft.reasoningEnabled}
+              onChange={checked =>
+                setDraft(current => ({
+                  ...current,
+                  reasoningEnabled: checked,
+                  reasoningDefault: checked ? current.reasoningDefault : 'off',
+                }))
+              }
+            />
+            <span className="fj-field-hint">
+              {draft.reasoningEnabled ? 'Mô hình được phép suy luận.' : 'Mọi yêu cầu chạy không suy luận.'}
+            </span>
+          </div>
+          <div className="fj-field">
+            <label>Mức mặc định</label>
+            <Select
+              value={draft.reasoningDefault}
+              disabled={!draft.reasoningEnabled}
+              onChange={value => setDraft(current => ({ ...current, reasoningDefault: String(value) }))}
+            >
+              {draft.reasoningLevels.map(level => (
+                <Select.Option key={level.id} value={level.id}>
+                  {levelLabel(level.id)}
+                </Select.Option>
+              ))}
+            </Select>
+            <span className="fj-field-hint">Áp dụng khi khách hàng không gửi mức suy luận.</span>
+          </div>
+          <div className="fj-field fj-field-grid--full">
+            <label>Các mức suy luận cho phép</label>
+            <div className="fj-level-grid" aria-hidden="true">
+              <span>Mức</span>
+              <span>Giá trị API</span>
+              <span />
+            </div>
+            <div className="fj-level-list">
+              {draft.reasoningLevels.map((level, index) => (
+                <div className="fj-level-row" key={`${level.id}-${index}`}>
+                  <Select
+                    value={level.id}
+                    allowCreate
+                    disabled={!draft.reasoningEnabled || level.id === 'off'}
+                    placeholder="low"
+                    onChange={value =>
+                      setDraft(current => {
+                        const next = current.reasoningLevels.map((entry, position) =>
+                          position === index ? { ...entry, id: String(value) } : entry,
+                        )
+                        const stillThere = next.some(entry => entry.id === current.reasoningDefault)
+                        return {
+                          ...current,
+                          reasoningLevels: next,
+                          reasoningDefault: stillThere ? current.reasoningDefault : (next[0]?.id ?? 'off'),
+                        }
+                      })
+                    }
+                  >
+                    {REASONING_LEVEL_OPTIONS.map(option => (
+                      <Select.Option key={option.value} value={option.value}>
+                        {option.label}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                  <Input
+                    value={level.apiValue}
+                    disabled={!draft.reasoningEnabled || level.id === 'off'}
+                    placeholder={level.id === 'off' ? 'Tắt suy luận' : 'low'}
+                    onChange={value =>
+                      setDraft(current => ({
+                        ...current,
+                        reasoningLevels: current.reasoningLevels.map((entry, position) =>
+                          position === index ? { ...entry, apiValue: value } : entry,
+                        ),
+                      }))
+                    }
+                  />
+                  <Button
+                    size="small"
+                    type="text"
+                    status="danger"
+                    aria-label={`Xoá mức ${level.id}`}
+                    disabled={!draft.reasoningEnabled || level.id === 'off'}
+                    onClick={() =>
+                      setDraft(current => {
+                        const next = current.reasoningLevels.filter((_entry, position) => position !== index)
+                        const stillThere = next.some(entry => entry.id === current.reasoningDefault)
+                        return {
+                          ...current,
+                          reasoningLevels: next,
+                          reasoningDefault: stillThere ? current.reasoningDefault : (next[0]?.id ?? 'off'),
+                        }
+                      })
+                    }
+                  >
+                    <IconDelete />
+                  </Button>
+                </div>
+              ))}
+            </div>
+            <Button
+              size="small"
+              type="dashed"
+              disabled={!draft.reasoningEnabled}
+              onClick={() =>
+                setDraft(current => {
+                  const taken = new Set(current.reasoningLevels.map(level => level.id))
+                  const id = ['low', 'medium', 'high', 'max'].find(candidate => !taken.has(candidate))
+                    ?? `level-${current.reasoningLevels.length + 1}`
+                  return { ...current, reasoningLevels: [...current.reasoningLevels, { id, apiValue: id }] }
+                })
+              }
+            >
+              <IconPlus /> Thêm mức
+            </Button>
+            <span className="fj-field-hint">
+              Giá trị API là chuỗi gửi cho nhà cung cấp, ví dụ <span className="fj-inline-code">low</span> hoặc{' '}
+              <span className="fj-inline-code">high</span>. Mức không có trong danh sách sẽ được đưa về mức mặc định.
+            </span>
           </div>
           <div className="fj-field">
             <label>Đề xuất</label>

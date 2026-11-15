@@ -191,13 +191,23 @@ pre {
 .fj-brand-mark {
   width: 34px;
   height: 34px;
-  border-radius: 6px;
+  border-radius: 8px;
   display: grid;
   place-items: center;
   background: var(--fj-accent);
   color: #fff;
   font-size: 16px;
   font-weight: 700;
+  overflow: hidden;
+}
+
+.fj-brand-mark::after {
+  content: '';
+  width: 21px;
+  height: 21px;
+  background-color: #fff;
+  -webkit-mask: url('/brand-mark.svg') center / contain no-repeat;
+  mask: url('/brand-mark.svg') center / contain no-repeat;
 }
 
 .fj-brand-text span {
@@ -1680,6 +1690,12 @@ button.fj-chip:hover {
   display: grid;
   gap: 6px;
   align-content: start;
+  justify-items: stretch;
+}
+
+/* A lone switch is a control, not a full-width block. */
+.fj-field > .arco-switch {
+  justify-self: start;
 }
 
 .fj-field > label {
@@ -1692,6 +1708,34 @@ button.fj-chip:hover {
   font-size: 11.5px;
   color: var(--fj-dim);
   line-height: 1.5;
+}
+
+.fj-level-grid,
+.fj-level-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) 30px;
+  gap: 8px;
+  align-items: center;
+}
+
+.fj-level-grid {
+  font-size: 11.5px;
+  color: var(--fj-dim);
+  padding: 0 2px;
+}
+
+.fj-level-list {
+  display: grid;
+  gap: 8px;
+}
+
+.fj-level-row .arco-select,
+.fj-level-row .arco-input {
+  width: 100%;
+}
+
+.fj-field > .arco-btn {
+  justify-self: start;
 }
 
 /* ---------------------------------------------------------------- downloads */
@@ -1836,6 +1880,46 @@ button.fj-chip:hover {
   margin-top: 1px;
   color: var(--fj-green);
   font-size: 12px;
+}
+
+/* ---------------------------------------------------------------- scrollbars */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd3df transparent;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd3df;
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #98a2b3;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* A closing Arco modal must never keep its mask over the page. */
+.arco-modal-mask.fadeModal-exit,
+.arco-modal-mask.fadeModal-exit-active,
+.arco-modal-mask.fadeModal-exit-done {
+  pointer-events: none;
 }
 
 /* ---------------------------------------------------------------- motion preferences */

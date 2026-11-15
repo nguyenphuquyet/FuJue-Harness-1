@@ -76,15 +76,21 @@ const PLANS = [
 /**
  * Marketing landing page: value proposition, live chat preview, models, integration, and pricing.
  *
- * @param props - served models rendered in the catalog section.
+ * @param props - served models rendered in the catalog section and whether the visitor is signed in.
  * @returns the public page.
  */
-export function LandingPageView({ models }: { readonly models: readonly PlatformModel[] }) {
+export function LandingPageView({
+  models,
+  signedIn,
+}: {
+  readonly models: readonly PlatformModel[]
+  readonly signedIn: boolean
+}) {
   const router = useRouter()
 
   return (
     <div>
-      <SiteHeader />
+      <SiteHeader signedIn={signedIn} />
       <main>
         <section className="fj-hero">
           <div className="fj-container fj-hero-grid">
@@ -100,9 +106,15 @@ export function LandingPageView({ models }: { readonly models: readonly Platform
                 Tạo khoá, xem chi phí từng lượt và mang mô hình vào sản phẩm của bạn trong vài phút.
               </p>
               <div className="fj-hero-actions">
-                <Button type="primary" size="large" onClick={() => router.push('/register')}>
-                  Bắt đầu miễn phí <IconArrowRight />
-                </Button>
+                {signedIn ? (
+                  <Button type="primary" size="large" onClick={() => router.push('/app')}>
+                    Mở bảng điều khiển <IconArrowRight />
+                  </Button>
+                ) : (
+                  <Button type="primary" size="large" onClick={() => router.push('/register')}>
+                    Bắt đầu miễn phí <IconArrowRight />
+                  </Button>
+                )}
                 <Button size="large" href="#models">
                   Xem mô hình
                 </Button>
@@ -378,7 +390,7 @@ export function LandingPageView({ models }: { readonly models: readonly Platform
           <div className="fj-footer-grid">
             <div>
               <div className="fj-brand" style={{ marginBottom: 14 }}>
-                <span className="fj-brand-mark">F</span>
+                <span className="fj-brand-mark" aria-hidden="true" />
                 <span className="fj-brand-text">
                   FuJue <span>Platform</span>
                 </span>
