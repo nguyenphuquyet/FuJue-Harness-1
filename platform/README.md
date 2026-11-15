@@ -76,6 +76,14 @@ Tài khoản demo sau khi seed:
 
 > Dữ liệu demo chỉ dành cho phát triển. Đổi mật khẩu và thu hồi khoá demo trước khi triển khai thật.
 
+### Chuyển nội dung giữa các bản triển khai
+
+`scripts/apply-content.mjs` ghi đè danh mục nhà cung cấp và mô hình bằng một bản xuất JSON (các bảng `providers`, `models`) từ bản triển khai khác. Bản xuất chứa khoá nhà cung cấp thật nên `seed-content.json` bị `.gitignore` chặn và không được commit.
+
+```sh
+node scripts/apply-content.mjs đường/dẫn/tới/seed-content.json
+```
+
 ### Biến môi trường
 
 | Biến | Bắt buộc | Mô tả |

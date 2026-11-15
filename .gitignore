@@ -8,6 +8,8 @@ lib/
 # The platform app is not a pnpm workspace package, so its source directory is
 # tracked rather than treated as a build output.
 !platform/src/lib/
+# Content exports carry live provider credentials and belong to one deployment.
+platform/seed-content.json
 *.tsbuildinfo
 pnpm-debug.log
 .pnpm-store/
