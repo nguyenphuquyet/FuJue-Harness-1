@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import { DesktopSessionBridge } from '@/components/app/DesktopSessionBridge'
-import { StandaloneShell } from '@/components/app/StandaloneShell'
 import { TopUpView } from '@/components/app/TopUpView'
 import { topUpInfo } from '@/lib/env'
 import { sessionUser } from '@/lib/session'
@@ -18,12 +17,12 @@ export default async function TopUpPage() {
   const user = await sessionUser()
   if (user === null) return <DesktopSessionBridge next="/top_up" />
   return (
-    <StandaloneShell email={user.email}>
+    <main className="fj-embed-body">
       <TopUpView
         wallet={{ balanceUsd: user.balanceUsd, bonusUsd: user.bonusUsd }}
         email={user.email}
         info={topUpInfo()}
       />
-    </StandaloneShell>
+    </main>
   )
 }

@@ -3,7 +3,6 @@
 import { Button, Spin } from '@arco-design/web-react'
 import { IconLock } from '@arco-design/web-react/icon'
 import { useEffect, useState } from 'react'
-import { Brand } from '@/components/Brand'
 
 /** The `window.dsh` bridge the Desktop Platform preload installs. */
 interface DesktopPlatformBridge {
@@ -79,7 +78,6 @@ export function DesktopSessionBridge({ next }: { readonly next: string }) {
   if (state === 'connecting') {
     return (
       <div className="fj-embed-gate">
-        <Brand />
         <section className="fj-embed-card">
           <Spin dot />
           <h2>Đang xác thực phiên Desktop</h2>
@@ -91,7 +89,6 @@ export function DesktopSessionBridge({ next }: { readonly next: string }) {
 
   return (
     <div className="fj-embed-gate">
-      <Brand />
       <section className="fj-embed-card">
         <div className="fj-embed-icon" aria-hidden="true">
           <IconLock />

@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import { DesktopSessionBridge } from '@/components/app/DesktopSessionBridge'
-import { StandaloneShell } from '@/components/app/StandaloneShell'
 import { UsageView } from '@/components/app/UsageView'
 import { sessionUser } from '@/lib/session'
 import { usageSummary } from '@/lib/usage'
@@ -25,8 +24,8 @@ export default async function UsagePage({ searchParams }: { searchParams: Promis
   const requested = Number(days ?? '30')
   const range = [7, 14, 30, 90].includes(requested) ? requested : 30
   return (
-    <StandaloneShell email={user.email}>
+    <main className="fj-embed-body">
       <UsageView summary={await usageSummary(user.id, range)} basePath="/usage" showPlayground={false} />
-    </StandaloneShell>
+    </main>
   )
 }
