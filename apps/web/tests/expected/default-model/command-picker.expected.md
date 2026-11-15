@@ -1,8 +1,8 @@
 - textbox "筛选选项":
   - /placeholder: 搜索模型…
 - listbox "/model 匹配项":
-  - group "DeepSeek":
-    - text: DeepSeek
+  - group "FuJue":
+    - text: FuJue
     - option "DeepSeek-V4-Flash"
     - option "DeepSeek-V4-Flash-Vision-Exp"
   - group "Origin Gateway":

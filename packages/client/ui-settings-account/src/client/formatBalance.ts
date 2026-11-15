@@ -17,5 +17,6 @@ export function formatBalance(amount: string, symbol: '¥' | '$'): string {
 
 function addCommas(value: string): string {
   const [integer, fraction] = value.split('.')
-  return `${Number(integer).toLocaleString()}.${fraction}`
+  // Grouping must not follow the host locale: Platform Web always writes `,` separators.
+  return `${Number(integer).toLocaleString('en-US')}.${fraction}`
 }

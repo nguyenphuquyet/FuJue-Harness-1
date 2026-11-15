@@ -289,7 +289,7 @@ export const zh = {
   welcomeSignIn: '登录',
   welcomeApiKey: '添加 API Key',
   welcomeKeyTitle: '添加一个 API Key 开始使用',
-  welcomeKeyDescription: '配置 DeepSeek 官方模型，即可开始使用',
+  welcomeKeyDescription: '配置 FuJue 官方模型，即可开始使用',
   welcomeKeyPlaceholder: '输入 API 密钥',
   welcomeKeySave: '保存并继续',
   welcomeKeyLater: '稍后配置',

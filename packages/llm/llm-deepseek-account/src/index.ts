@@ -33,7 +33,7 @@ export function apply(ctx: Context, config: Config): void {
   const supported = resolveAdapterOptions({}).models
   const resolveAuth = async (connection: ResolvedDeepSeekOptions): Promise<DeepSeekRequestAuth> => {
     const token = await resolveDeepSeekAccountToken(ctx, connection.baseURL)
-    if (token === undefined) throw new LlmError('Sign in to DeepSeek to use the account provider. The request destination must allow account authentication.', 'ACCOUNT_SIGN_IN_REQUIRED')
+    if (token === undefined) throw new LlmError('Sign in to FuJue to use the account provider. The request destination must allow account authentication.', 'ACCOUNT_SIGN_IN_REQUIRED')
     return {
       headers: { [TOKEN_HEADER]: token },
       onRequestError: async (error) => {
@@ -70,7 +70,7 @@ export function apply(ctx: Context, config: Config): void {
     }
     return { ...resolved.protocol, models: result.resolution, catalog: result }
   }
-  const entry = { provider: PROVIDER, displayName: 'DeepSeek Account', settingsNs: ctx.fiber.entry?.options.id ?? name, settingsPath: [] }
+  const entry = { provider: PROVIDER, displayName: 'FuJue account', settingsNs: ctx.fiber.entry?.options.id ?? name, settingsPath: [] }
   const directory = ctx.llm.registerConfigurableProviders([entry])
   let reportedError: string | undefined
   /** Publish override diagnostics on the provider directory. */
@@ -84,7 +84,7 @@ export function apply(ctx: Context, config: Config): void {
     return connection
   }
   registerDeepSeekProvider<AccountConnection>(ctx, PROVIDER, {
-    providerName: 'DeepSeek Account',
+    providerName: 'FuJue account',
     options: () => connectionOf(catalog.current()),
     connect: async signal => connectionOf(await catalog.view(settings().catalog, signal)),
     resolveAuth,

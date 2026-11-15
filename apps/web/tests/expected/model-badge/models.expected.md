@@ -1,9 +1,9 @@
 - menu "模型":
-  - group "DeepSeek 账号":
-    - text: DeepSeek 账号
+  - group "FuJue 账号":
+    - text: FuJue 账号
     - menuitemradio "DeepSeek-V4.1-Flash 1017"
-  - group "DeepSeek":
-    - text: DeepSeek
+  - group "FuJue":
+    - text: FuJue
     - menuitemradio "DeepSeek-V4.1-Flash 新" [checked]
     - menuitemradio "DeepSeek-V4-Pro"
     - menuitemradio "DeepSeek model with a very long release and capability description that exceeds the selector width Preview"

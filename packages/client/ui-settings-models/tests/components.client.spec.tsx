@@ -2650,7 +2650,7 @@ it('renders the localized account row as signed in without an edit action', asyn
   await act(async () => { controller.store.update((state) => {
     state.rows = [{ ...row, accountAvailable: true, entry: { ...row.entry, provider: 'deepseek-account' } }]
   }) })
-  const item = screen.getByText(en.deepSeekAccount).closest('li')!
+  const item = screen.getByText(en.accountName).closest('li')!
   expect(within(item).getByText(en.accountSignedIn)).toBeTruthy()
   expect(within(item).queryByText(en.edit)).toBeNull()
 })
