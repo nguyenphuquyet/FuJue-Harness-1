@@ -1,10 +1,29 @@
-import { redirect } from 'next/navigation'
+import type { Metadata } from 'next'
+import { DesktopSessionBridge } from '@/components/app/DesktopSessionBridge'
+import { StandaloneShell } from '@/components/app/StandaloneShell'
+import { TopUpView } from '@/components/app/TopUpView'
+import { topUpInfo } from '@/lib/env'
+import { sessionUser } from '@/lib/session'
+
+export const dynamic = 'force-dynamic'
+
+export const metadata: Metadata = { title: 'Nạp tiền' }
 
 /**
- * Top-up link the Desktop account menu opens.
+ * Standalone recharge page opened by the Desktop account menu.
  *
- * @returns no UI; the browser continues to the billing section of settings.
+ * @returns the recharge page, or the session bridge for the cookie-less embedded view.
  */
-export default function TopUpRedirect() {
-  redirect('/app/settings#billing')
+export default async function TopUpPage() {
+  const user = await sessionUser()
+  if (user === null) return <DesktopSessionBridge next="/top_up" />
+  return (
+    <StandaloneShell email={user.email}>
+      <TopUpView
+        wallet={{ balanceUsd: user.balanceUsd, bonusUsd: user.bonusUsd }}
+        email={user.email}
+        info={topUpInfo()}
+      />
+    </StandaloneShell>
+  )
 }

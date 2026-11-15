@@ -16,10 +16,18 @@ const sourceLabel: Record<UsageEntry['source'], string> = {
 /**
  * Usage dashboard with window filters, a daily chart, and rollups by model, key, and request.
  *
- * @param props - aggregates and the selected window.
+ * @param props - aggregates, the route that re-renders the window filter, and whether to offer the Playground shortcut.
  * @returns the usage page content.
  */
-export function UsageView({ summary }: { readonly summary: UsageSummary }) {
+export function UsageView({
+  summary,
+  basePath = '/app/usage',
+  showPlayground = true,
+}: {
+  readonly summary: UsageSummary
+  readonly basePath?: string
+  readonly showPlayground?: boolean
+}) {
   const router = useRouter()
   const maxCost = Math.max(...summary.daily.map(bucket => bucket.costUsd), 0.000001)
 
@@ -107,7 +115,7 @@ export function UsageView({ summary }: { readonly summary: UsageSummary }) {
         <Radio.Group
           type="button"
           value={summary.days}
-          onChange={value => router.push(`/app/usage?days=${Number(value)}`)}
+          onChange={value => router.push(`${basePath}?days=${Number(value)}`)}
         >
           <Radio value={7}>7 ngày</Radio>
           <Radio value={14}>14 ngày</Radio>
@@ -204,9 +212,11 @@ export function UsageView({ summary }: { readonly summary: UsageSummary }) {
             <h2>Yêu cầu gần đây</h2>
             <p>20 yêu cầu mới nhất của tài khoản</p>
           </div>
-          <Button size="small" href="/app/playground">
-            Mở Playground
-          </Button>
+          {showPlayground ? (
+            <Button size="small" href="/app/playground">
+              Mở Playground
+            </Button>
+          ) : null}
         </div>
         {summary.recent.length === 0 ? (
           <Empty description="Chưa có yêu cầu nào" />

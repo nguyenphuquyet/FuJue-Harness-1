@@ -16,6 +16,7 @@ Platform phục vụ đúng giao thức mà FuJue Harness Desktop đang dùng, n
 - **Quản lý thiết bị** — xem và thu hồi từng token Desktop, hoặc thu hồi toàn bộ.
 - **Bảng quản trị** — danh mục mô hình, nhà cung cấp bên thứ ba (URL + khoá API, kiểm tra kết nối), tài khoản, sử dụng toàn nền tảng, thông báo Desktop, nhật ký quản trị và cấu hình trang tải ứng dụng.
 - **Trang tải FuJue Harness** — `/download` công khai, hiển thị phiên bản, liên kết cài Windows/macOS/Linux do quản trị viên cập nhật.
+- **Trang riêng cho Desktop** — `/usage` và `/top_up` là trang độc lập mà ứng dụng mở trong khung riêng. Trang không có cookie tự đổi token thiết bị (`fjk_at_…`) lấy từ preload thành phiên cookie qua `/api/auth/desktop-session`, nên vẫn dùng đúng số dư và lịch sử của tài khoản đang đăng nhập.
 - **Bảo mật** — cookie HttpOnly SameSite=Lax, scrypt cho mật khẩu, token chỉ lưu băm, redirect allowlist.
 
 ## Stack
@@ -92,6 +93,8 @@ node scripts/apply-content.mjs đường/dẫn/tới/seed-content.json
 | `HARNESS_RELEASES_URL` | không | Trang phát hành mặc định cho các bộ cài chưa có URL trực tiếp. |
 | `ALLOWED_REDIRECT_ORIGINS` | không | Danh sách origin HTTPS (phẩy) được phép nhận mã uỷ quyền ngoài origin của Platform. |
 | `NODE_ENV` | không | `production` bật cờ `Secure` cho cookie phiên. |
+| `PLATFORM_BANK_NAME` / `PLATFORM_BANK_ACCOUNT` / `PLATFORM_BANK_HOLDER` | không | Tài khoản nhận tiền hiển thị trên `/top_up`. Thiếu `PLATFORM_BANK_NAME` hoặc `PLATFORM_BANK_ACCOUNT` thì trang chỉ hiện hướng dẫn liên hệ quản trị viên. |
+| `PLATFORM_TOPUP_NOTE` | không | Ghi chú tuỳ chọn đặt trên đầu trang `/top_up`, ví dụ thời gian đối soát. |
 | `PLATFORM_ADMIN_EMAIL` / `PLATFORM_ADMIN_PASSWORD` / `PLATFORM_ADMIN_NAME` | không | Tài khoản chủ sở hữu do `db:init` tạo; mặc định `quyetguic@gmail.com` / `quyet12345` / `QuyetGuic`. |
 
 ## Kết nối FuJue Harness Desktop
@@ -140,6 +143,16 @@ Mọi endpoint tài khoản yêu cầu header `x-dsh-auth-token`. Response bọc
 | `GET` | `/api/v0/users/notifications/content?id=…` | Nội dung một thông báo. |
 | `POST` | `/api/v0/users/notifications/events` | Báo `displayed`, `cta_clicked`, `dismissed`. |
 | `GET` | `/models` | Danh mục mô hình cho Desktop (huy hiệu, năng lực, ngữ cảnh). |
+
+### Trang nhúng trong Desktop
+
+Nút **Xem mức sử dụng** và **Nạp tiền** mở `/usage` và `/top_up` trong `WebContentsView` riêng của ứng dụng. Khung này xoá cookie trước mỗi lần mở, nên preload đưa token thiết bị ra `window.dsh.getAuthToken()` và trang tự đổi token thành phiên cookie:
+
+| Phương thức | Đường dẫn | Mục đích |
+| --- | --- | --- |
+| `POST` | `/api/auth/desktop-session` | Nhận `{ "token": "fjk_at_…" }`, kiểm tra token còn hiệu lực rồi đặt cookie `fujue_session`. Trả hồ sơ công khai của tài khoản; `401 invalid_grant` khi token bị thu hồi. |
+
+Trang tải lần đầu chưa có cookie nên hiển thị trạng thái "Đang xác thực phiên Desktop", gọi endpoint trên rồi tải lại. Không có `window.dsh` (trình duyệt thường) thì trang hiện thẻ đăng nhập thay vì dữ liệu. Nội dung chuyển khoản trên `/top_up` là `FJ <email>` để quản trị viên đối soát đúng tài khoản.
 
 ## API cho ứng dụng
 

@@ -87,3 +87,40 @@ export function upstreamApiKey(): string | undefined {
 export function secureCookies(): boolean {
   return process.env.NODE_ENV === 'production'
 }
+
+/** Manual recharge destination rendered by `/top_up`. */
+export interface TopUpInfo {
+  /** Bank the transfer goes to, or null when the deployment has not configured one. */
+  readonly bank: string | null
+  /** Receiving account number, or null when not configured. */
+  readonly accountNumber: string | null
+  /** Account holder name the sender must match, or null when not configured. */
+  readonly accountHolder: string | null
+  /** Operator instructions shown above the transfer details, or null. */
+  readonly note: string | null
+}
+
+/**
+ * Read one optional deployment value.
+ *
+ * @param name - environment variable name.
+ * @returns trimmed text, or null when unset or blank.
+ */
+function optionalValue(name: string): string | null {
+  const value = process.env[name]?.trim()
+  return value === undefined || value === '' ? null : value
+}
+
+/**
+ * Resolve the manual recharge destination from `PLATFORM_BANK_*` and `PLATFORM_TOPUP_NOTE`.
+ *
+ * @returns the configured fields; a null entry tells the page to fall back to the admin contact.
+ */
+export function topUpInfo(): TopUpInfo {
+  return {
+    bank: optionalValue('PLATFORM_BANK_NAME'),
+    accountNumber: optionalValue('PLATFORM_BANK_ACCOUNT'),
+    accountHolder: optionalValue('PLATFORM_BANK_HOLDER'),
+    note: optionalValue('PLATFORM_TOPUP_NOTE'),
+  }
+}
