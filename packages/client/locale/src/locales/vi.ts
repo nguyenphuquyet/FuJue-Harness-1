@@ -33,7 +33,7 @@ export const vi = {
   'collapse': 'Thu gọn',
   'expand': 'Mở rộng',
   'back': 'Quay lại',
-  'brand.localBuild': 'FuJue Harness bản dựng cục bộ',
+  'brand.productName': 'FuJue Harness',
   'workspace.defaultName': 'Không gian làm việc mặc định',
   'unknown': 'Không rõ',
   'none': 'Không có',

@@ -34,7 +34,7 @@ export const ru = {
   'collapse': 'Свернуть',
   'expand': 'Развернуть',
   'back': 'Назад',
-  'brand.localBuild': 'Локальная сборка FuJue Harness',
+  'brand.productName': 'FuJue Harness',
   'workspace.defaultName': 'Рабочая область по умолчанию',
   'unknown': 'Неизвестно',
   'none': 'Нет',
