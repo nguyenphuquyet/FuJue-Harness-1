@@ -69,13 +69,19 @@ export interface Config {
   /** Upper bound for the entire local attempt, even if the server advertises a longer TTL. */
   attemptTimeoutMs?: number
 }
+/**
+ * Production deployment origin serving Platform pages, notification APIs, and inference.
+ * Grants issued by a local development platform never authenticate its inference.
+ */
+const DEPLOYMENT_ORIGIN = 'https://platform.nguyenphuquyet.online'
+
 /** Validated deployment choices. */
 const Config = Schema.object({
-  platformOrigin: Schema.string().default('https://platform.deepseek.com'),
-  harnessOrigin: Schema.string().default('https://harness.deepseek.com'),
+  platformOrigin: Schema.string().default(DEPLOYMENT_ORIGIN),
+  harnessOrigin: Schema.string().default(DEPLOYMENT_ORIGIN),
   desktopPlatform: Schema.union([Schema.const('darwin'), Schema.const('win32'), Schema.const(null)]).default(null),
   embeddedPageDist: Schema.string().default(''),
-  inferenceOrigin: Schema.string().default('https://api.deepseek.com'),
+  inferenceOrigin: Schema.string().default(DEPLOYMENT_ORIGIN),
   allowLoopbackHttp: Schema.boolean().default(false),
   rewriteBrowserOrigin: Schema.boolean().default(false),
   requestHeaders: Schema.dict(Schema.string().role('secret')).default({}),
@@ -463,7 +469,7 @@ export class DeepSeekAccount extends TypertRemoteService {
     // Development grants cannot authenticate production model or file requests.
     const issuer = new URL(result.data.issuer)
     if (result.data.token.startsWith('dsh_mock_')) return undefined
-    if (this.inferenceOrigin === 'https://api.deepseek.com') {
+    if (this.inferenceOrigin === DEPLOYMENT_ORIGIN) {
       if (['localhost', '127.0.0.1', '[::1]'].includes(issuer.hostname)) return undefined
     } else if (issuer.origin !== this.origin) return undefined
     return result.data.token

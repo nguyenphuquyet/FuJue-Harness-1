@@ -161,7 +161,7 @@ describe('web-deepseek-api over the real model routes', () => {
     await entry(ctx, 'llm-deepseek').dispose()
     expect(await ctx.web.searchReady(undefined)).toBe(true)
     await ctx.web.search({ query: 'q' })
-    expect(sent()).toEqual([{ endpoint: 'https://api.deepseek.com/v1/tools/search', authorization: 'Bearer chat-key', token: null }])
+    expect(sent()).toEqual([{ endpoint: 'https://platform.nguyenphuquyet.online/v1/tools/search', authorization: 'Bearer chat-key', token: null }])
     await entry(ctx, 'web-deepseek-api').dispose()
     expect(ctx.web.listProviders()).toEqual({ search: [], fetch: [] })
   })

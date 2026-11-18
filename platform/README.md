@@ -105,13 +105,13 @@ Trong `cordis.patch.yml` (hoặc `cordis.yml`) của profile Desktop. `config` c
 - id: deepseek-account
   config:
     desktopPlatform: !!js "ctx.get('profileContext')?.name === 'desktop' && ['darwin', 'win32'].includes(process.platform) ? process.platform : null"
-    platformOrigin: 'https://platform.fujue.ai'
-    harnessOrigin: 'https://platform.fujue.ai'
-    inferenceOrigin: 'https://platform.fujue.ai'
+    platformOrigin: 'https://platform.nguyenphuquyet.online'
+    harnessOrigin: 'https://platform.nguyenphuquyet.online'
+    inferenceOrigin: 'https://platform.nguyenphuquyet.online'
 
 - id: llm-deepseek-account
   config:
-    baseURL: 'https://platform.fujue.ai/anthropic'
+    baseURL: 'https://platform.nguyenphuquyet.online/anthropic'
 ```
 
 Chạy cục bộ bằng HTTP loopback thì thêm:
@@ -156,10 +156,10 @@ Trang tải lần đầu chưa có cookie nên hiển thị trạng thái "Đang
 
 ## API cho ứng dụng
 
-Base URL: `https://platform.fujue.ai/v1` (OpenAI-compatible) hoặc `https://platform.fujue.ai/anthropic` (Anthropic-compatible).
+Base URL: `https://platform.nguyenphuquyet.online/v1` (OpenAI-compatible) hoặc `https://platform.nguyenphuquyet.online/anthropic` (Anthropic-compatible).
 
 ```sh
-curl https://platform.fujue.ai/v1/chat/completions \
+curl https://platform.nguyenphuquyet.online/v1/chat/completions \
   -H "Authorization: Bearer $FJ_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -172,7 +172,7 @@ curl https://platform.fujue.ai/v1/chat/completions \
 ```python
 from openai import OpenAI
 
-client = OpenAI(api_key="fjk_sk_...", base_url="https://platform.fujue.ai/v1")
+client = OpenAI(api_key="fjk_sk_...", base_url="https://platform.nguyenphuquyet.online/v1")
 print(client.chat.completions.create(
     model="deepseek-flash",
     messages=[{"role": "user", "content": "Xin chào"}],

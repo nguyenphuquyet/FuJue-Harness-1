@@ -290,10 +290,10 @@ export function LandingPageView({
                   <span className="tok-key">config:</span>
                   {'\n'}
                   {'    '}
-                  <span className="tok-key">platformOrigin:</span> <span className="tok-str">&apos;https://platform.fujue.ai&apos;</span>
+                  <span className="tok-key">platformOrigin:</span> <span className="tok-str">&apos;https://platform.nguyenphuquyet.online&apos;</span>
                   {'\n'}
                   {'    '}
-                  <span className="tok-key">inferenceOrigin:</span> <span className="tok-str">&apos;https://platform.fujue.ai&apos;</span>
+                  <span className="tok-key">inferenceOrigin:</span> <span className="tok-str">&apos;https://platform.nguyenphuquyet.online&apos;</span>
                   {'\n'}
                   {'\n'}
                   <span className="tok-key">- id:</span> llm-deepseek-account{'\n'}
@@ -301,11 +301,11 @@ export function LandingPageView({
                   <span className="tok-key">config:</span>
                   {'\n'}
                   {'    '}
-                  <span className="tok-key">baseURL:</span> <span className="tok-str">&apos;https://platform.fujue.ai/anthropic&apos;</span>
+                  <span className="tok-key">baseURL:</span> <span className="tok-str">&apos;https://platform.nguyenphuquyet.online/anthropic&apos;</span>
                 </div>
                 <div className="fj-code-block" style={{ marginTop: 14 }} aria-label="Gọi API bằng curl">
                   <span className="tok-com"># Gọi API bằng khoá FuJue</span>
-                  {'\n'}curl https://platform.fujue.ai/v1/chat/completions \{'\n'}
+                  {'\n'}curl https://platform.nguyenphuquyet.online/v1/chat/completions \{'\n'}
                   {'  '}-H <span className="tok-str">&quot;Authorization: Bearer $FJ_API_KEY&quot;</span> \{'\n'}
                   {'  '}-H <span className="tok-str">&quot;Content-Type: application/json&quot;</span> \{'\n'}
                   {'  '}-d <span className="tok-str">&apos;{'{'}&quot;model&quot;:&quot;deepseek-flash&quot;,&quot;messages&quot;:[{'{'}&quot;role&quot;:&quot;user&quot;,&quot;content&quot;:&quot;Xin chào&quot;{'}'}]{'}'}&apos;</span>

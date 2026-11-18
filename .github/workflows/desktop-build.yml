@@ -1,0 +1,148 @@
+name: Desktop build
+
+# Builds the Electron Desktop application from source on GitHub-hosted
+# runners and uploads unsigned installers for Windows and macOS. Packaging
+# pulls the Electron, Node and Python runtimes and rebuilds the whole
+# repository, so this workflow runs on pushes to a release branch and on
+# manual dispatch rather than on every pull request. Signing, notarization,
+# retained-runner routing and publication stay with the packaging and
+# publication workflows.
+on:
+  push:
+    branches: [master, main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  PRIMARY_NODE_VERSION: '24'
+  DSH_TELEMETRY_DISABLED: '1'
+
+# Cancel a superseded run on a new push, as in ci.yml.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows:
+    name: Build Windows x64 installer
+    runs-on: windows-latest
+    timeout-minutes: 120
+    defaults:
+      run:
+        shell: pwsh
+    env:
+      # Packaging reads release settings from the ignored local dotenv, never
+      # from the shell, so the step below writes it from these values.
+      DESKTOP_PACKAGE_APP_ID: com.deepseek.dsh
+      # Anonymous production policy: test deployment would require Feishu login
+      # origins. The placeholder origin answers no policy, which leaves updates
+      # available but never mandatory; set the repository variable to a real
+      # service origin to enforce policy in fork builds.
+      DESKTOP_PACKAGE_POLICY_ORIGIN: ${{ vars.DSH_DESKTOP_MANDATORY_UPDATE_PROD_ORIGIN || 'https://example.com' }}
+      # Installer archive compression: 3 packages faster, 7 packages smaller.
+      DESKTOP_PACKAGE_COMPRESSION_LEVEL: '3'
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@v5.0.0
+        with:
+          dest: ${{ runner.temp }}/setup-pnpm-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: ${{ env.PRIMARY_NODE_VERSION }}
+          cache: pnpm
+      - name: Install (immutable)
+        run: pnpm install --frozen-lockfile
+
+      - name: Write packaging settings
+        run: |
+          $dotenv = @(
+            "DSH_DESKTOP_APP_ID=$env:DESKTOP_PACKAGE_APP_ID"
+            'DSH_DESKTOP_AUTO_UPDATE_ENV=production'
+            "DSH_DESKTOP_MANDATORY_UPDATE_PROD_ORIGIN=$env:DESKTOP_PACKAGE_POLICY_ORIGIN"
+            "DSH_DESKTOP_WINDOWS_COMPRESSION_LEVEL=$env:DESKTOP_PACKAGE_COMPRESSION_LEVEL"
+          ) -join "`n"
+          Set-Content -LiteralPath 'apps/desktop/.env.windows' -Value $dotenv -NoNewline -Encoding utf8
+
+      - name: Check packaging configuration and toolchain
+        run: pnpm run package:desktop:win:x64:unsigned --check
+
+      - name: Build installer and verify the packaged runtime
+        run: pnpm run package:desktop:win:x64:unsigned
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: fujue-harness-desktop-win-x64-unsigned-${{ github.run_id }}-${{ github.run_attempt }}
+          path: apps/desktop/.desktop-build/targets/win-x64/unsigned-artifacts/
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Upload packaging diagnostics
+        if: always()
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: fujue-harness-desktop-win-x64-logs-${{ github.run_id }}-${{ github.run_attempt }}
+          path: apps/desktop/.desktop-build/packaging-runs/
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 7
+
+  macos:
+    name: Build macOS ${{ matrix.arch }} installer
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # macos-latest is Apple Silicon; macos-15-intel is native x64, and a
+          # mac-x64 package needs an Intel host or an Apple Silicon host with
+          # Rosetta, which hosted Apple Silicon runners do not guarantee.
+          - arch: arm64
+            runner: macos-latest
+          - arch: x64
+            runner: macos-15-intel
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@v5.0.0
+        with:
+          dest: ${{ runner.temp }}/setup-pnpm-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: ${{ env.PRIMARY_NODE_VERSION }}
+          cache: pnpm
+      - name: Install (immutable)
+        run: pnpm install --frozen-lockfile
+
+      - name: Check packaging configuration and toolchain
+        run: pnpm run package:desktop:mac:${{ matrix.arch }}:unsigned --check
+
+      - name: Build installer and verify the packaged runtime
+        run: pnpm run package:desktop:mac:${{ matrix.arch }}:unsigned
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: fujue-harness-desktop-mac-${{ matrix.arch }}-unsigned-${{ github.run_id }}-${{ github.run_attempt }}
+          path: apps/desktop/.desktop-build/targets/mac-${{ matrix.arch }}/unsigned-artifacts/
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Upload packaging diagnostics
+        if: always()
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: fujue-harness-desktop-mac-${{ matrix.arch }}-logs-${{ github.run_id }}-${{ github.run_attempt }}
+          path: apps/desktop/.desktop-build/packaging-runs/
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 7

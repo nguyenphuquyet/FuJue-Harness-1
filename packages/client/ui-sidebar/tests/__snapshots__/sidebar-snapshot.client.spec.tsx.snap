@@ -142,7 +142,7 @@ exports[`sidebar shell snapshots > renders Windows caption controls in expanded 
               >
                 <svg
                   aria-hidden="true"
-                  data-content="965fe321"
+                  data-content="992c12fa"
                   fill="none"
                   height="17.6580310880829"
                   viewBox="0 0 23.16 17.04"
@@ -165,7 +165,7 @@ exports[`sidebar shell snapshots > renders Windows caption controls in expanded 
                 <span
                   class="localBuildTitle"
                 >
-                  DSH Local Build
+                  FuJue Harness Local Build
                 </span>
                 <span
                   class="buildVersion"
@@ -302,7 +302,7 @@ exports[`sidebar shell snapshots > renders the collapsed rail after the crossfad
           >
             <svg
               aria-hidden="true"
-              data-content="965fe321"
+              data-content="992c12fa"
               fill="none"
               height="17.6580310880829"
               viewBox="0 0 23.16 17.04"
@@ -433,7 +433,7 @@ exports[`sidebar shell snapshots > renders the expanded column (wordmark, capsul
               >
                 <svg
                   aria-hidden="true"
-                  data-content="965fe321"
+                  data-content="992c12fa"
                   fill="none"
                   height="17.6580310880829"
                   viewBox="0 0 23.16 17.04"
@@ -456,7 +456,7 @@ exports[`sidebar shell snapshots > renders the expanded column (wordmark, capsul
                 <span
                   class="localBuildTitle"
                 >
-                  DSH Local Build
+                  FuJue Harness Local Build
                 </span>
                 <span
                   class="buildVersion"
@@ -599,7 +599,7 @@ exports[`sidebar shell snapshots > renders the expanded column in the default lo
               >
                 <svg
                   aria-hidden="true"
-                  data-content="965fe321"
+                  data-content="992c12fa"
                   fill="none"
                   height="17.6580310880829"
                   viewBox="0 0 23.16 17.04"
@@ -622,7 +622,7 @@ exports[`sidebar shell snapshots > renders the expanded column in the default lo
                 <span
                   class="localBuildTitle"
                 >
-                  DSH 本地构建
+                  FuJue Harness 本地构建
                 </span>
                 <span
                   class="buildVersion"

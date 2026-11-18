@@ -31,11 +31,11 @@ async function fixture(issuer: string, config: Config = {}) {
 }
 
 it('routes only notification APIs to Harness while account APIs and pages stay on Platform', async () => {
-  const account = await fixture('https://platform.deepseek.com')
+  const account = await fixture('https://platform.nguyenphuquyet.online', { harnessOrigin: 'https://notifications.example' })
   expect(await account.getState()).toMatchObject({ status: 'credential-stored', links: {
-    usageUrl: 'https://platform.deepseek.com/usage', topUpUrl: 'https://platform.deepseek.com/top_up',
+    usageUrl: 'https://platform.nguyenphuquyet.online/usage', topUpUrl: 'https://platform.nguyenphuquyet.online/top_up',
   } })
-  expect(await account.getPlatformSession()).toMatchObject({ origin: 'https://platform.deepseek.com', token: 'fixture-token' })
+  expect(await account.getPlatformSession()).toMatchObject({ origin: 'https://platform.nguyenphuquyet.online', token: 'fixture-token' })
   const id = 'f487920c-a8d5-59b6-90f0-b787adc97980' as AccountNotificationId
   const content = { id, created_at: '2026-10-28T06:12:11Z', display_until: null, title: 'News', body: 'Content', actions: [] }
   const requests: string[] = []
@@ -57,16 +57,16 @@ it('routes only notification APIs to Harness while account APIs and pages stay o
   expect((await account.getNotificationContent(id, client))?.id).toBe(id)
   expect(await account.reportNotificationEvent(id, 'dismissed', client)).toBe(true)
   expect(requests).toEqual([
-    'https://platform.deepseek.com/auth-api/v0/users/current',
-    'https://platform.deepseek.com/api/v0/users/get_user_summary',
-    'https://harness.deepseek.com/api/v0/users/notifications/list',
-    `https://harness.deepseek.com/api/v0/users/notifications/content?id=${id}`,
-    'https://harness.deepseek.com/api/v0/users/notifications/events',
+    'https://platform.nguyenphuquyet.online/auth-api/v0/users/current',
+    'https://platform.nguyenphuquyet.online/api/v0/users/get_user_summary',
+    'https://notifications.example/api/v0/users/notifications/list',
+    `https://notifications.example/api/v0/users/notifications/content?id=${id}`,
+    'https://notifications.example/api/v0/users/notifications/events',
   ])
 })
 
 it('keeps private grants and embedded pages on Platform while allowing a notification origin override', async () => {
-  const rejected = await fixture('https://platform.deepseek.com', { platformOrigin: 'https://private.example' })
+  const rejected = await fixture('https://platform.nguyenphuquyet.online', { platformOrigin: 'https://private.example' })
   expect(await rejected.getState()).toMatchObject({ status: 'signed-out' })
   const account = await fixture('https://private.example', {
     platformOrigin: 'https://private.example', harnessOrigin: 'https://notifications.example',
@@ -87,6 +87,6 @@ it('keeps private grants and embedded pages on Platform while allowing a notific
 
 it.each(['http://remote.example', 'https://notifications.example/path'])(
   'rejects the invalid notification origin %s during initialization', async (harnessOrigin) => {
-    await expect(fixture('https://platform.deepseek.com', { harnessOrigin })).rejects.toThrow('harnessOrigin')
+    await expect(fixture('https://platform.nguyenphuquyet.online', { harnessOrigin })).rejects.toThrow('harnessOrigin')
   },
 )

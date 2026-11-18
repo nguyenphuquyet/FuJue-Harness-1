@@ -244,7 +244,7 @@ export const vi = {
   'effort.providerDefault': 'Mặc định',
   'status.loading': 'Đang làm mới danh sách mô hình…',
   'error.action': 'Thao tác mô hình thất bại: {message}',
-  'error.sessionInUse': 'Phiên này đang được sử dụng, có thể bởi một phiên bản DeepSeek Harness khác đang chạy (như dsh web hoặc ứng dụng desktop). Hãy thoát các phiên bản DeepSeek Harness khác đang chạy rồi thử lại.',
+  'error.sessionInUse': 'Phiên này đang được sử dụng, có thể bởi một phiên bản FuJue Harness khác đang chạy (như dsh web hoặc ứng dụng desktop). Hãy thoát các phiên bản FuJue Harness khác đang chạy rồi thử lại.',
   'action.reload': 'Tải lại',
   'warning.groupLoad': 'Không tải được {name}: {message}',
   'search.placeholder': 'Tìm kiếm mô hình…',

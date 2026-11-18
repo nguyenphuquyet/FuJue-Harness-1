@@ -1883,7 +1883,7 @@ export const vi = {
   'message.failure.auth': 'Khóa API không hợp lệ',
   'message.taskStopped': 'Tác vụ đã dừng',
   'message.failure.accountSignedOut': 'Đã dừng vì bạn đã đăng xuất khỏi DeepSeek.',
-  'message.failure.interrupted': 'Tiến trình DeepSeek Harness đã thoát trước khi lượt này hoàn tất (ví dụ bị buộc dừng, gặp sự cố hoặc hết thời gian khi tắt), nên lượt đã bị đóng khi DeepSeek Harness khởi động lại. Các lệnh gọi công cụ chưa hoàn tất có kết quả không xác định.',
+  'message.failure.interrupted': 'Tiến trình FuJue Harness đã thoát trước khi lượt này hoàn tất (ví dụ bị buộc dừng, gặp sự cố hoặc hết thời gian khi tắt), nên lượt đã bị đóng khi FuJue Harness khởi động lại. Các lệnh gọi công cụ chưa hoàn tất có kết quả không xác định.',
   'message.failure.accountSignInRequired': 'Hãy đăng nhập DeepSeek và đảm bảo đích yêu cầu hỗ trợ xác thực tài khoản.',
   'message.failure.quota': 'Đã hết hạn mức yêu cầu.',
   'message.turnError': 'Lượt này thất bại',

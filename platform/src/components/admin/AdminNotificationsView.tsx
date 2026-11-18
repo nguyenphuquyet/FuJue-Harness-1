@@ -309,7 +309,7 @@ export function AdminNotificationsView({
             <Input
               id="notice-href"
               value={draft.href}
-              placeholder="https://platform.fujue.ai/download"
+              placeholder="https://platform.nguyenphuquyet.online/download"
               maxLength={512}
               onChange={value => setDraft(current => ({ ...current, href: value }))}
             />

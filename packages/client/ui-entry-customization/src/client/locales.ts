@@ -92,7 +92,7 @@ export const vi = {
   'pin': 'Ghim {name} vào thanh bên',
   install: 'Khám phá các plugin khác',
   create: 'Tạo plugin của bạn',
-  'createPrompt.sidebar': 'Tạo plugin DeepSeek Harness với một mục ở thanh bên trái.',
-  'createPrompt.conversation': 'Tạo plugin giao diện hội thoại DeepSeek Harness.',
-  'createPrompt.rightbar': 'Tạo plugin DeepSeek Harness với một mục ở thanh bên phải.',
+  'createPrompt.sidebar': 'Tạo plugin FuJue Harness với một mục ở thanh bên trái.',
+  'createPrompt.conversation': 'Tạo plugin giao diện hội thoại FuJue Harness.',
+  'createPrompt.rightbar': 'Tạo plugin FuJue Harness với một mục ở thanh bên phải.',
 } satisfies Record<keyof typeof en, string>

@@ -388,7 +388,7 @@ export const pt = {
 export const vi = {
   ...guideVi,
   builtInGroup: 'Tích hợp', customGroup: 'Tùy chỉnh',
-  sectionIntro: 'Chọn công cụ cho agent và cách agent hoạt động. Dùng chế độ Tiêu chuẩn cho tác vụ thường ngày, hoặc chế độ Nhà sáng tạo để thêm khả năng cho DeepSeek Harness.',
+  sectionIntro: 'Chọn công cụ cho agent và cách agent hoạt động. Dùng chế độ Tiêu chuẩn cho tác vụ thường ngày, hoặc chế độ Nhà sáng tạo để thêm khả năng cho FuJue Harness.',
 
   seatHint: 'Chọn preset agent cho tác vụ mới',
   headerHint: 'Preset agent được chọn khi tác vụ này bắt đầu',
@@ -408,7 +408,7 @@ export const vi = {
     'Agent dùng terminal và đọc hình ảnh, kèm nén ngữ cảnh. Hữu ích để kiểm tra và so sánh hiệu suất cơ bản.',
   presetCordisName: 'Chế độ Nhà sáng tạo',
   presetCordisDescription:
-    'Tùy chỉnh DeepSeek Harness qua hội thoại. Để agent viết plugin thêm tính năng hoặc giao diện, hoặc kết hợp công cụ và lời nhắc để tạo chế độ riêng.',
+    'Tùy chỉnh FuJue Harness qua hội thoại. Để agent viết plugin thêm tính năng hoặc giao diện, hoặc kết hợp công cụ và lời nhắc để tạo chế độ riêng.',
 
   inUse: 'Mặc định cho tác vụ mới',
 
@@ -422,7 +422,7 @@ export const vi = {
 
   creatorDraft: 'Để agent giúp tôi tạo preset',
   createPlugin: 'Để agent tạo plugin',
-  createPluginDescription: 'Vào chế độ Nhà sáng tạo và tạo plugin DeepSeek Harness của riêng bạn',
+  createPluginDescription: 'Vào chế độ Nhà sáng tạo và tạo plugin FuJue Harness của riêng bạn',
   createPluginChecking: 'Đang kiểm tra xem chế độ Nhà sáng tạo có khả dụng không',
   createPluginUnavailable: 'Tạm thời không khả dụng. Mở lại menu này để thử lại',
   createPluginMissing: 'Chế độ Nhà sáng tạo không có trong cấu hình này',

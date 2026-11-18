@@ -27,7 +27,7 @@ kind: "package-reference"
 
 账号 token 仅由 `deepseekAccount.resolveToken(url)` 提供，目标地址必须通过账号服务的来源校验。未登录或目标不允许账号鉴权时，请求以 `ACCOUNT_SIGN_IN_REQUIRED` 失败，目录为空；不会回退到 API key。其他凭据查询错误继续向调用者报告。
 
-路由的目录来自账号的 `GET /models` 列表，地址为 Messages `baseURL` 的 origin 加 `/models`（官方端点即 `https://api.deepseek.com/models`），不可配置。列表请求用 `x-dsh-auth-token` 携带账号 token，带上 harness 的 `User-Agent`，并拒绝重定向。
+路由的目录来自账号的 `GET /models` 列表，地址为 Messages `baseURL` 的 origin 加 `/models`（官方端点即 `https://platform.nguyenphuquyet.online/models`），不可配置。列表请求用 `x-dsh-auth-token` 携带账号 token，带上 harness 的 `User-Agent`，并拒绝重定向。
 
 同一凭据的第一次访问会等待列表，最长 `modelsTimeoutMs`。首次使用后，Host 每隔 `modelsMaxAgeMs`（默认十分钟）自动刷新，页面空闲时也会刷新。刷新过程中，后续访问直接返回缓存列表。获取失败或得到空列表时保留上一份列表及其角标；还没有加载到任何列表时，路由提供当前版本内置的目录（`deepseek-flash` 与 `deepseek-v4-pro`）。列表请求返回 HTTP 401 不会清除已保存的登录。每次加载成功、连续失败中的第一次失败及其退回的目录、每个被隐藏的列表条目，以及每个被丢弃的角标，都会以 `[llm-deepseek-account]` 标签写到 stderr；stdout 保留给协议消息，且不记录任何密钥。每个账号 token 有自己的列表，因此服务端可以先对部分账号开放某个模型。 列表变化时发出 `llm/models-updated`，已打开的选择器会重新加载，无需刷新页面。省略角标元数据或将其设为 `null` 会清除旧角标，无需单独的清除操作。插件卸载会停止刷新并等待进行中的加载结束。
 

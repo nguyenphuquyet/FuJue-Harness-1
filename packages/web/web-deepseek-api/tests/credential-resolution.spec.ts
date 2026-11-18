@@ -33,7 +33,7 @@ vi.mock('@deepseek-ai/dsh-llm-deepseek-api-key', async (importOriginal) => {
 type Operation = 'search' | 'fetch'
 
 const OPERATIONS: readonly Operation[] = ['search', 'fetch']
-const OFFICIAL = 'https://api.deepseek.com/v1/tools'
+const OFFICIAL = 'https://platform.nguyenphuquyet.online/v1/tools'
 const ROUTE = 'https://route.deepseek.test/v1/tools'
 const ACCOUNT = 'https://account.deepseek.test/v1/tools'
 const OWN = 'https://own.deepseek.test/api/v1/tools'

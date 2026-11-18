@@ -154,7 +154,7 @@ describe('llm-deepseek real dynamic composition', () => {
     vi.stubEnv('DEEPSEEK_API_KEY', '')
     // The official endpoint's model listing is unavailable, so the route serves its built-in catalog offline.
     vi.spyOn(globalThis, 'fetch').mockImplementation(() => Promise.resolve(new Response(null, { status: 404 })))
-    const { ctx } = await loadComposition({ withDynamic: true, baseURL: 'https://api.deepseek.com/anthropic' })
+    const { ctx } = await loadComposition({ withDynamic: true, baseURL: 'https://platform.nguyenphuquyet.online/anthropic' })
     const credentials = ctx.get('credentials')!
     const models = await ctx.llm.listModels('deepseek-official')
     expect(models).not.toHaveLength(0)
@@ -180,14 +180,14 @@ describe('llm-deepseek real dynamic composition', () => {
     const messages = { api_capabilities: { anthropic_messages: {} } }
     vi.spyOn(globalThis, 'fetch').mockImplementation((input, init) => {
       const request = new Request(input, init)
-      if (request.url !== 'https://api.deepseek.com/models') return Promise.reject(new Error(`unexpected request to ${request.url}`))
+      if (request.url !== 'https://platform.nguyenphuquyet.online/models') return Promise.reject(new Error(`unexpected request to ${request.url}`))
       keys.push(request.headers.get('x-api-key'))
       return Promise.resolve(new Response(JSON.stringify({ data: [
         { id: 'deepseek-flash', ...messages },
         { id: 'deepseek-v5', ...messages, client_requirements: { 'deepseek-harness': { min_version: '0.0.1' } } },
       ] })))
     })
-    const { ctx } = await loadComposition({ withDynamic: true, baseURL: 'https://api.deepseek.com/anthropic' })
+    const { ctx } = await loadComposition({ withDynamic: true, baseURL: 'https://platform.nguyenphuquyet.online/anthropic' })
     const ids = async () => (await ctx.llm.listModels('deepseek-official')).map(model => model.id)
     expect(await ids()).toEqual(['deepseek-flash', 'deepseek-v5'])
 
@@ -209,7 +209,7 @@ describe('llm-deepseek real dynamic composition', () => {
       { id: 'deepseek-flash', ...messages, client_metadata: { 'deepseek-harness': { badge: { text: { en: 'New', zh: '新' }, tone: 'info' } } } },
       { id: 'deepseek-v4-pro', ...messages, client_metadata: { 'deepseek-harness': { badge: { text: 'far too long a badge' } } } },
     ] }))))
-    const { ctx } = await loadComposition({ withDynamic: true, baseURL: 'https://api.deepseek.com/anthropic' })
+    const { ctx } = await loadComposition({ withDynamic: true, baseURL: 'https://platform.nguyenphuquyet.online/anthropic' })
     const badges = async () => (await ctx.llm.listModels('deepseek-official')).map(model => [model.id, model.badge])
     expect(await badges()).toEqual([
       ['deepseek-flash', { text: { en: 'New', zh: '新' }, tone: 'info' }],

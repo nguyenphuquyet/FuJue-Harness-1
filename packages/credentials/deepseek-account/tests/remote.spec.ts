@@ -47,7 +47,7 @@ it('streams initial state and credential changes and ends on cancellation', asyn
     expect(await stream.next()).toMatchObject({ done: false, value: { type: 'snapshot', state: { status: 'signed-out' } } })
     const next = stream.next()
     await ctx.credentials.modifyRecord(credentialKey('deepseek-account-platform', 'default'), () => Promise.resolve({
-      kind: 'grant', payload: { version: 1, token: 'fixture-token', issuer: 'https://platform.deepseek.com' },
+      kind: 'grant', payload: { version: 1, token: 'fixture-token', issuer: 'https://platform.nguyenphuquyet.online' },
     }))
     expect(await next).toMatchObject({ done: false, value: { type: 'credentials-changed', state: { status: 'credential-stored' } } })
   } finally { lifetime.abort() }

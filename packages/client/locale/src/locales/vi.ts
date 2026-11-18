@@ -33,7 +33,7 @@ export const vi = {
   'collapse': 'Thu gọn',
   'expand': 'Mở rộng',
   'back': 'Quay lại',
-  'brand.localBuild': 'DSH bản dựng cục bộ',
+  'brand.localBuild': 'FuJue Harness bản dựng cục bộ',
   'workspace.defaultName': 'Không gian làm việc mặc định',
   'unknown': 'Không rõ',
   'none': 'Không có',

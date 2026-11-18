@@ -1,0 +1,16 @@
+# Bilingual-pair consistency record for guide.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/upgrade-guide/v0.2.2-rc.3/fujue-harness-rebrand/guide.md
+/:
+  en: ec7259cb9dae3940
+  zh: 168faea31b4cb143
+/fujue-harness-replaces-the-deepseek-harness-brand-data-directory-artifact-names-and-endpoints:
+  en: d59643c43fd0d045
+  zh: 51f7c1e127191f9e
+/fujue-harness-replaces-the-deepseek-harness-brand-data-directory-artifact-names-and-endpoints/change:
+  en: 957cfcf08ed5dcef
+  zh: b9df7cd00afb3d7f
+/fujue-harness-replaces-the-deepseek-harness-brand-data-directory-artifact-names-and-endpoints/migration:
+  en: 56d6ffc4010c5d67
+  zh: 39813583fefad76f

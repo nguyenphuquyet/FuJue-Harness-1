@@ -21,7 +21,7 @@
   en: bdee4adb7916e6cc
   zh: 2880c3594ebab7ab
 /desktop-packaging/configuration-and-local-builds:
-  en: 5b4f0f80a117f202
+  en: 28e272a8285c4f1f
   zh: ff05be196c181087
 /desktop-packaging/windows-actions-packaging:
   en: b39449c2f945cab9
@@ -33,8 +33,8 @@
   en: f429bc0c280e2dfa
   zh: 4adbcc9e906bdf80
 /desktop-packaging/local-macos-dmg-without-release-signing:
-  en: 1146bbc11be43960
-  zh: 7c13543a0513c059
+  en: 8bd7f4cac5a1aa4e
+  zh: e3387754de449f5e
 /desktop-packaging/macos-release-signing-and-diagnostics:
   en: a0b4aa1080ecf6fb
   zh: 37d4b8934f89bee8
@@ -45,8 +45,8 @@
   en: b42f103358d0dfd7
   zh: a534164ad9eb00da
 /desktop-packaging/runtime-file-selection-and-installation-checks:
-  en: da4669b98c79ee48
-  zh: d007e87f13ff54d3
+  en: 2cf0d358f9b89796
+  zh: a6c211c2dde934f0
 /desktop-packaging/desktop-runtime-preparation:
   en: 84be38ab3136fff7
   zh: bb4ed12ee0e1dfa0

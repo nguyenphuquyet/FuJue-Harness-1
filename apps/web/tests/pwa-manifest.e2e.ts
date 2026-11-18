@@ -4,7 +4,7 @@ import { join } from 'node:path'
 import { expect, it } from 'vitest'
 import { chromium, type Page } from 'playwright'
 import {
-  APP_ICON_VARIANTS, ICON_OUTPUT_DIRECTORY, MASKABLE_ARTWORK_SCALE, MASKABLE_SAFE_RADIUS_RATIO,
+  ICON_OUTPUT_DIRECTORY, MARK_INK_RADIUS_RATIO, MASKABLE_SAFE_RADIUS_RATIO,
   TILE_SOURCE, renderAppIcons, tileDocument,
 } from '../scripts/render-app-icons.ts'
 
@@ -51,7 +51,7 @@ it('ships install metadata with the built web application', async () => {
   expect(index).toContain('<link rel="manifest" href="./manifest.webmanifest" />')
   expect(index).toContain('<link rel="apple-touch-icon" href="./apple-touch-icon.png" />')
   expect(index).toContain('<meta name="mobile-web-app-capable" content="yes" />')
-  expect(index).toContain('<meta name="apple-mobile-web-app-title" content="DSH" />')
+  expect(index).toContain('<meta name="apple-mobile-web-app-title" content="FuJue" />')
   // No `theme-color` here: `ThemePresenter` owns the single metadata node and
   // follows the resolved in-application theme, which a static media query
   // cannot. The manifest's `theme_color` covers the surrounding chrome before
@@ -62,8 +62,8 @@ it('ships install metadata with the built web application', async () => {
   // so only an absent `id`, which defaults to the resolved `start_url`, gives
   // each mount its own identity. `public-mount.e2e.ts` reads the resolved form.
   expect(manifest).toEqual({
-    name: 'DeepSeek Harness',
-    short_name: 'DSH',
+    name: 'FuJue Harness',
+    short_name: 'FuJue',
     start_url: './',
     scope: './',
     // `standalone` keeps the phone's status bar; `fullscreen` hides it and the
@@ -94,7 +94,6 @@ it('decodes every generated and shipped icon with its full artwork and opaque co
     for (const { variant, png } of generated) {
       const reference = await pixels(page, svgUrl(tileDocument(source)), variant.size)
       expect(reference.ink).toBeGreaterThan(0)
-      const scale = variant.kind === 'maskable' ? MASKABLE_ARTWORK_SCALE : 1
       for (const bytes of [png, await readFile(join(DIST_ROOT, variant.file))]) {
         const image = await pixels(page, pngUrl(bytes), variant.size)
         expect([image.width, image.height], variant.file).toEqual([variant.size, variant.size])
@@ -102,7 +101,7 @@ it('decodes every generated and shipped icon with its full artwork and opaque co
         expect(image.ink, variant.file).toBeGreaterThan(0)
         // Two pixels allow rasterizer and downsampling differences without
         // accepting missing or undersized artwork in the published PNG.
-        expect(Math.abs(image.radius - reference.radius * scale), variant.file).toBeLessThan(2)
+        expect(Math.abs(image.radius - reference.radius), variant.file).toBeLessThan(2)
       }
     }
   } finally { await browser.close() }
@@ -163,15 +162,22 @@ it('keeps the shipped maskable artwork inside its opaque platform safe zone', as
   const browser = await chromium.launch({ headless: true })
   try {
     const page = await browser.newPage()
-    const maskable = await readFile(join(DIST_ROOT, 'icon-maskable-512.png'))
+    const manifest = JSON.parse(await readFile(join(DIST_ROOT, 'manifest.webmanifest'), 'utf8')) as {
+      icons: readonly { src: string; sizes: string; purpose?: string }[]
+    }
+    const declared = manifest.icons.find(icon => icon.purpose === 'maskable')
+    if (declared === undefined) throw new Error('the manifest declares no maskable icon')
+    const size = Number(declared.sizes.split('x')[0])
     const tile = tileDocument(await readFile(TILE_SOURCE, 'utf8'))
-    const size = APP_ICON_VARIANTS.find(variant => variant.kind === 'maskable')!.size
-    const scaled = await pixels(page, pngUrl(maskable), size)
-    const unscaled = await pixels(page, svgUrl(tile), size)
-    expect(scaled.radius).toBeLessThanOrEqual(MASKABLE_SAFE_RADIUS_RATIO * size)
-    expect(scaled.radius).toBeGreaterThan(unscaled.radius * MASKABLE_ARTWORK_SCALE - 2)
-    expect(scaled.corners).toEqual([255, 255, 255, 255])
-    expect(unscaled.radius).toBeGreaterThan(MASKABLE_SAFE_RADIUS_RATIO * size)
+    const shipped = await pixels(page, pngUrl(await readFile(join(DIST_ROOT, declared.src))), size)
+    const reference = await pixels(page, svgUrl(tile), size)
+    expect(reference.ink).toBeGreaterThan(0)
+    // The mark reaches a measured fraction of the edge, so it lies inside the
+    // circle every platform mask shows and needs no scale-down.
+    expect(Math.abs(reference.radius / size - MARK_INK_RADIUS_RATIO)).toBeLessThan(0.01)
+    expect(shipped.radius).toBeLessThanOrEqual(MASKABLE_SAFE_RADIUS_RATIO * size)
+    expect(Math.abs(shipped.radius - reference.radius)).toBeLessThan(2)
+    expect(shipped.corners).toEqual([255, 255, 255, 255])
   } finally {
     await browser.close()
   }

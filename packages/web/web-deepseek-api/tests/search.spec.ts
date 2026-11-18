@@ -255,7 +255,7 @@ describe('Search API configuration and failures', () => {
       await ctx.plugin(webApiPlugin, {})
       await ctx.web.search({ query: 'q' })
       expect(fetchMock.mock.calls[0]?.[0]).toBe(`${DEEPSEEK_WEB_API_BASE_URL}/search`)
-      expect(DEEPSEEK_WEB_API_BASE_URL).toBe('https://api.deepseek.com/v1/tools')
+      expect(DEEPSEEK_WEB_API_BASE_URL).toBe('https://platform.nguyenphuquyet.online/v1/tools')
     } finally { await ctx.fiber.dispose() }
   })
 

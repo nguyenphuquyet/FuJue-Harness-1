@@ -3630,7 +3630,7 @@ export const vi = {
   'queue.remove': 'Xóa tin nhắn đang xếp hàng',
   'queue.steer': 'Chỉ đạo tin nhắn đang xếp hàng',
   'queue.steer.unavailable': 'Chỉ có thể chỉ đạo khi agent đang chạy',
-  'error.sessionInUse': 'Phiên này đã được sử dụng, có thể bởi một phiên bản DeepSeek Harness khác đang chạy (như dsh web hoặc ứng dụng máy tính). Hãy thoát các phiên bản DeepSeek Harness khác rồi thử lại.',
+  'error.sessionInUse': 'Phiên này đã được sử dụng, có thể bởi một phiên bản FuJue Harness khác đang chạy (như dsh web hoặc ứng dụng máy tính). Hãy thoát các phiên bản FuJue Harness khác rồi thử lại.',
   'queue.editFailed': 'Chỉnh sửa thất bại: tin nhắn này có thể đã bắt đầu gửi.',
   'queue.removeFailed': 'Xóa thất bại: tin nhắn này có thể đã bắt đầu gửi.',
   'queue.steerFailed': 'Chỉ đạo thất bại. Hãy thử lại.',

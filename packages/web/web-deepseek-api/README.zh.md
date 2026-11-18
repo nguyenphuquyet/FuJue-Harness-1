@@ -45,11 +45,11 @@ kind: "package-reference"
 | `searchBilling` | `auto` | 没有单独配置时 Search 发送的凭据：`auto`、`account` 或 `api-key`（[鉴权](#authentication)） |
 | `fetchBilling` | `auto` | 没有单独配置时 Fetch 发送的凭据，取值相同 |
 | `searchBaseURL` | 省略 | Search API 基础地址，包含路径前缀；追加 `/search`。只设置此项时，`searchApiKeyEnv` 默认为 `DEEPSEEK_API_KEY`（[鉴权](#authentication)） |
-| `searchApiKeyEnv` | 省略 | Search 凭据引用。只设置此项时，`searchBaseURL` 默认为 `https://api.deepseek.com/v1/tools` |
+| `searchApiKeyEnv` | 省略 | Search 凭据引用。只设置此项时，`searchBaseURL` 默认为 `https://platform.nguyenphuquyet.online/v1/tools` |
 | `fetchBaseURL` | 省略 | Fetch API 基础地址，包含路径前缀；追加 `/fetch`，默认值规则相同 |
 | `fetchApiKeyEnv` | 省略 | Fetch 凭据引用，默认值规则相同 |
 
-两个字段都未设置的能力按其计费方式，请求所选 DeepSeek 模型路由解析后的 Messages 基础地址的 origin 下的 `/v1/tools/search` 与 `/v1/tools/fetch`，因此官方 `https://api.deepseek.com/anthropic` 或 `DEEPSEEK_BASE_URL` 覆盖值分别得到 `https://api.deepseek.com/v1/tools`，或覆盖值的 origin 加 `/v1/tools`。`dsh` 启动器从启动环境或 `$DSH_HOME/.env` 接受 `DEEPSEEK_BASE_URL`，绝不从项目 `.env` 接受（[app-boot](../../boot/app-boot/README.zh.md)）。单独配置的基础地址填写完整的 API 基础地址，包含路径前缀，但不包含操作名；使用其他前缀（例如 `/api/v1/tools`）的部署需要填写其完整基础地址。空字段视为未设置。这些单独配置的字段只能在 YAML 中设置，优先于计费方式；设置页只为这两个提供方显示计费方式下拉框。早期设置中保存的 `baseURL`、`apiKeyEnv` 与 `apiKey` 字段可以正常加载，但不再生效。
+两个字段都未设置的能力按其计费方式，请求所选 DeepSeek 模型路由解析后的 Messages 基础地址的 origin 下的 `/v1/tools/search` 与 `/v1/tools/fetch`，因此默认 `https://platform.nguyenphuquyet.online/anthropic` 或 `DEEPSEEK_BASE_URL` 覆盖值分别得到 `https://platform.nguyenphuquyet.online/v1/tools`，或覆盖值的 origin 加 `/v1/tools`。`dsh` 启动器从启动环境或 `$DSH_HOME/.env` 接受 `DEEPSEEK_BASE_URL`，绝不从项目 `.env` 接受（[app-boot](../../boot/app-boot/README.zh.md)）。单独配置的基础地址填写完整的 API 基础地址，包含路径前缀，但不包含操作名；使用其他前缀（例如 `/api/v1/tools`）的部署需要填写其完整基础地址。空字段视为未设置。这些单独配置的字段只能在 YAML 中设置，优先于计费方式；设置页只为这两个提供方显示计费方式下拉框。早期设置中保存的 `baseURL`、`apiKeyEnv` 与 `apiKey` 字段可以正常加载，但不再生效。
 
 真实 API 测试要求同时设置 `DEEPSEEK_API_KEY` 和 `DEEPSEEK_SEARCH_API_TEST_BASE_URL`，后者包含 API 路径前缀。
 
@@ -58,9 +58,9 @@ kind: "package-reference"
 
 Search 与 Fetch 每次操作各自从同一份设置快照解析端点和凭据，因此保存的设置、模型提供方变更、登录或存入的密钥从下一次操作开始生效。会话的路由是发起会话最近一次请求上下文的 `provider`；`ready()` 使用正在准备的模型请求的路由。
 
-- **单独配置。** 设置了非空 `*BaseURL` 或 `*ApiKeyEnv` 的能力在任何路由上都只以 `Authorization: Bearer` 把其 `*ApiKeyEnv`（未设置时为 `DEEPSEEK_API_KEY`）下的密钥发往其 `*BaseURL`（未设置时为 `https://api.deepseek.com/v1/tools`），从不发送账号令牌。没有该密钥时，操作失败，诊断信息点名该引用和 `*ApiKeyEnv` 字段。
-- **账号令牌。** 操作通过 `x-dsh-auth-token` 发送 `ctx.deepseekAccount` 为请求端点给出的令牌；2026-10-16 公网 Search 与 Fetch 路由已接受该令牌。端点位于模型提供方目录为 `deepseek-account` 列出的、入口根部活动的 `@deepseek-ai/dsh-llm-deepseek-account` Loader 条目的 origin 下；没有该条目时，位于该路由默认基础地址的 origin（`https://api.deepseek.com`，或 `DEEPSEEK_BASE_URL` 的 origin）下。没有登录、没有账号服务或令牌为空都算没有令牌。账号令牌读取失败时操作失败，不再尝试其他凭据。条目活动但其设置被该路由自身的解析器拒绝时，操作在轮到该来源时失败，不读取该账号令牌。
-- **API 密钥。** 操作以 `Authorization: Bearer` 把目录为 `deepseek-official` 列出的活动 `@deepseek-ai/dsh-llm-deepseek-api-key` 条目的 `apiKeyEnv`（默认 `DEEPSEEK_API_KEY`）下的密钥发往该路由的 origin，并按该路由的方式解析其选项。没有该条目或条目未激活时，把 `DEEPSEEK_API_KEY` 发往 `https://api.deepseek.com/v1/tools`。条目活动但其设置被该路由自身的解析器拒绝时，每个需要该密钥的操作都在读取密钥前失败，绝不改用官方端点或 `DEEPSEEK_API_KEY`。
+- **单独配置。** 设置了非空 `*BaseURL` 或 `*ApiKeyEnv` 的能力在任何路由上都只以 `Authorization: Bearer` 把其 `*ApiKeyEnv`（未设置时为 `DEEPSEEK_API_KEY`）下的密钥发往其 `*BaseURL`（未设置时为 `https://platform.nguyenphuquyet.online/v1/tools`），从不发送账号令牌。没有该密钥时，操作失败，诊断信息点名该引用和 `*ApiKeyEnv` 字段。
+- **账号令牌。** 操作通过 `x-dsh-auth-token` 发送 `ctx.deepseekAccount` 为请求端点给出的令牌；2026-10-16 公网 Search 与 Fetch 路由已接受该令牌。端点位于模型提供方目录为 `deepseek-account` 列出的、入口根部活动的 `@deepseek-ai/dsh-llm-deepseek-account` Loader 条目的 origin 下；没有该条目时，位于该路由默认基础地址的 origin（`https://platform.nguyenphuquyet.online`，或 `DEEPSEEK_BASE_URL` 的 origin）下。没有登录、没有账号服务或令牌为空都算没有令牌。账号令牌读取失败时操作失败，不再尝试其他凭据。条目活动但其设置被该路由自身的解析器拒绝时，操作在轮到该来源时失败，不读取该账号令牌。
+- **API 密钥。** 操作以 `Authorization: Bearer` 把目录为 `deepseek-official` 列出的活动 `@deepseek-ai/dsh-llm-deepseek-api-key` 条目的 `apiKeyEnv`（默认 `DEEPSEEK_API_KEY`）下的密钥发往该路由的 origin，并按该路由的方式解析其选项。没有该条目或条目未激活时，把 `DEEPSEEK_API_KEY` 发往 `https://platform.nguyenphuquyet.online/v1/tools`。条目活动但其设置被该路由自身的解析器拒绝时，每个需要该密钥的操作都在读取密钥前失败，绝不改用默认端点或 `DEEPSEEK_API_KEY`。
 - **`auto` 计费**跟随会话。在 `deepseek-account` 路由上先发送账号令牌，没有令牌时发送 API 密钥；没有账号路由条目时只发送 API 密钥。在 `deepseek-official` 路由上只发送 API 密钥。在其他路由上或会话之外先发送 API 密钥，没有密钥时发送账号令牌；没有密钥且已挂载的账号路由条目设置无法解析时，操作失败。
 - **`account` 计费**在任何路由上只发送账号令牌，**`api-key` 计费**只发送 API 密钥；两者都不回退到另一种凭据。
 

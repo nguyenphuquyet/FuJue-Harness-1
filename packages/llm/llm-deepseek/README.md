@@ -54,7 +54,7 @@ A request selects the route with `provider: deepseek-official`; the model id pas
 
 | Field | Default | Meaning |
 |---|---|---|
-| `baseURL` | `https://api.deepseek.com/anthropic` | Explicit value, then `$DEEPSEEK_BASE_URL`, then the official root |
+| `baseURL` | `https://platform.nguyenphuquyet.online/anthropic` | Explicit value, then `$DEEPSEEK_BASE_URL`, then the default root |
 | `thinking` | `enabled` | Deployment policy; `disabled` locks every request to `off` |
 | `reasoningEffort` | `high` | Default effort: `off`, `low`, `high`, or `max` |
 | `maxTokens` | `256,000` | Per-request output cap; a model's own cap and explicit request values win |
@@ -80,14 +80,14 @@ When [proactive compaction](../../compaction/compaction-basic/README.md#use-this
 <a id="endpoint-and-wire-format"></a>
 ### Endpoint and wire format
 
-The official root is `https://api.deepseek.com/anthropic`. An explicit `baseURL` or `$DEEPSEEK_BASE_URL` supplies a Messages-compatible root; the `dsh` launcher accepts that variable from the launching environment or `$DSH_HOME/.env`, never from a project `.env` ([app-boot](../../boot/app-boot/README.md)). Model and Files requests append `/v1/messages` and `/v1/files`, except that an exact final `/v1` segment is reused. Trailing slashes do not change these results. A base URL must use HTTP(S) without credentials, query, or fragment.
+The default root is `https://platform.nguyenphuquyet.online/anthropic`. An explicit `baseURL` or `$DEEPSEEK_BASE_URL` supplies a Messages-compatible root; the `dsh` launcher accepts that variable from the launching environment or `$DSH_HOME/.env`, never from a project `.env` ([app-boot](../../boot/app-boot/README.md)). Model and Files requests append `/v1/messages` and `/v1/files`, except that an exact final `/v1` segment is reused. Trailing slashes do not change these results. A base URL must use HTTP(S) without credentials, query, or fragment.
 
 Messages sends text, thinking, tool calls, and tool results as content blocks, reasoning effort as `output_config.effort`, and images as Files references or inline base64. Models declaring `systemPromptUpdate: in-history` retain the initial top-level system and send new system snapshots after their corresponding user/tool-result turn; undeclared models use the latest snapshot as the top-level system. Replay metadata preserves the model and thinking signatures. Invalid replay metadata emits a warning and omits signatures while retaining text and tool history. Model entries may declare `toolUpdate: addition-only` or `in-history`; the default `deepseek-flash` entry declares `addition-only`. Projected developer tool updates become system-role `tool_addition` and `tool_removal` blocks referencing declared names, and deferred declarations carry `defer_loading`. Requests containing those blocks send the `mid-conversation-tool-changes-2026-07-01` beta header. Messages omits empty assistant text blocks and skips assistant messages left without content, including saved history from other protocols. The stored Session content remains intact.
 
 <a id="account-credentials"></a>
 ### Account credentials
 
-`deepseek-official` resolves only its configured API-key reference. `deepseek-account` resolves only the stored grant from the [account service](../../credentials/deepseek-account/README.md), whose allowed `inferenceOrigin` defaults to `https://api.deepseek.com`. Neither route falls back to the other. Signing out removes the account grant and preserves API keys.
+`deepseek-official` resolves only its configured API-key reference. `deepseek-account` resolves only the stored grant from the [account service](../../credentials/deepseek-account/README.md), whose allowed `inferenceOrigin` defaults to `https://platform.nguyenphuquyet.online`. Neither route falls back to the other. Signing out removes the account grant and preserves API keys.
 
 Messages and Files requests send account tokens as `x-dsh-auth-token` without a Bearer prefix; API keys use `x-api-key`. Neither credential mode follows redirects. The account service owns HTTP 401 classification and credential invalidation; the transport passes failures to its callback.
 

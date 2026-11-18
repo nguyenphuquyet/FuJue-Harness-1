@@ -684,7 +684,7 @@ describe('web-search-deepseek plugin registration', () => {
       deepseekPlugin.apply(ctx, deepseekPlugin.Config({}))
       await ctx.web.search({ query: 'q' })
       const [url, init = {}] = fetchMock.mock.calls[0]!
-      expect(url).toBe('https://api.deepseek.com/anthropic/v1/messages')
+      expect(url).toBe('https://platform.nguyenphuquyet.online/anthropic/v1/messages')
       expect((init.headers as Record<string, string>)['x-api-key']).toBe('env-key')
       expect(JSON.parse(init.body as string)).toMatchObject({ model: 'deepseek-v4-flash' })
       await ctx.fiber.dispose()
@@ -784,7 +784,7 @@ describe('web-search-deepseek account route selection', () => {
 
   it('authenticates with the account token when the initiating Session uses the account route', async () => {
     const { headers, asked } = await searchAs('deepseek-account')
-    expect(asked).toEqual(['https://api.deepseek.com/anthropic/v1/messages'])
+    expect(asked).toEqual(['https://platform.nguyenphuquyet.online/anthropic/v1/messages'])
     expect(headers['x-dsh-auth-token']).toBe('account-token')
     expect(headers).not.toHaveProperty('x-api-key')
   })
@@ -856,7 +856,7 @@ describe('web-search-deepseek search readiness', () => {
     return {
       resolveToken: (url: string) => {
         asked.push(url)
-        return Promise.resolve(new URL(url).origin === 'https://api.deepseek.com' ? 'account-token' : undefined)
+        return Promise.resolve(new URL(url).origin === 'https://platform.nguyenphuquyet.online' ? 'account-token' : undefined)
       },
     }
   }
@@ -910,7 +910,7 @@ describe('web-search-deepseek search readiness', () => {
     const asked: string[] = []
     const ctx = await compose({ account: officialOriginAccount(asked) })
     expect(await ctx.web.searchReady('deepseek-account')).toBe(true)
-    expect(asked).toEqual(['https://api.deepseek.com/anthropic/v1/messages'])
+    expect(asked).toEqual(['https://platform.nguyenphuquyet.online/anthropic/v1/messages'])
   })
 
   it('asks the account only for the account route', async () => {

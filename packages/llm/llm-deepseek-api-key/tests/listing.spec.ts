@@ -5,7 +5,7 @@ import LlmRuntime from '@deepseek-ai/dsh-llm'
 import { liveConfig } from '../../../settings/settings/tests/live-config.ts'
 import * as ApiKey from '../src/index.ts'
 
-const LISTING_URL = 'https://api.deepseek.com/models'
+const LISTING_URL = 'https://platform.nguyenphuquyet.online/models'
 const MESSAGES = { output_modalities: ['text'], api_capabilities: { anthropic_messages: {} } }
 const FLASH = {
   id: 'deepseek-flash', name: 'DeepSeek-V4.1-Flash', context_window: 1_048_576, max_output_tokens: 393_216,

@@ -43,7 +43,7 @@ function defaultReleaseUrl(): string {
 export function defaultDownloads(): DownloadConfig {
   const version = process.env.HARNESS_VERSION?.trim() || '0.2.2'
   const releaseUrl = defaultReleaseUrl()
-  const file = (target: string, extension: string): string => `deepseek-harness-${version}-${target}.${extension}`
+  const file = (target: string, extension: string): string => `fujue-harness-${version}-${target}.${extension}`
   return {
     version,
     releaseUrl,

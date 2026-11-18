@@ -252,7 +252,7 @@ describe.skipIf(webSnapshotMode() === 'record')('web e2e: DeepSeek Messages sett
     await messages.getByText('使用已保存的 API key。', { exact: true }).waitFor()
     await messages.getByText('自定义设置', { exact: true }).click()
     expect(await messages.getByLabel('API 地址', { exact: true }).getAttribute('placeholder'))
-      .toBe('https://api.deepseek.com/anthropic（默认使用环境 DEEPSEEK_BASE_URL）')
+      .toBe('https://platform.nguyenphuquyet.online/anthropic（默认使用环境 DEEPSEEK_BASE_URL）')
     await compareOrRefreshGolden(join(EXPECTED, 'cards.expected.md'),
       await captureStableAria(page, '[role="dialog"]', scaffold.workspaceCwd), webSnapshotMode())
     await messages.getByLabel('API 密钥', { exact: true }).fill('sk-e2e-messages')

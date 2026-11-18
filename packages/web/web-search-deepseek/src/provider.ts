@@ -31,7 +31,7 @@ export const DEEPSEEK_PROVIDER_ID = 'deepseek-official'
  * `$DEEPSEEK_SEARCH_BASE_URL` overrides it independently of the conversation
  * adapter's endpoint. Both providers share the API key.
  */
-export const DEEPSEEK_DEFAULT_BASE_URL = 'https://api.deepseek.com/anthropic/v1'
+export const DEEPSEEK_DEFAULT_BASE_URL = 'https://platform.nguyenphuquyet.online/anthropic/v1'
 
 /** Default Anthropic-format model name (aligned with the repo's DeepSeek model vocabulary). */
 export const DEEPSEEK_DEFAULT_MODEL = 'deepseek-v4-flash'

@@ -85,7 +85,7 @@ export const vi = {
   'error.invalid': 'Địa chỉ đó không hợp lệ hoặc quá dài.',
   'error.protocol': 'Chỉ hỗ trợ địa chỉ HTTP và HTTPS; hãy dùng Xem trước tài liệu cho tệp cục bộ.',
   'error.credentials': 'Địa chỉ không được chứa tên người dùng hoặc mật khẩu.',
-  'error.application-origin': 'Trình duyệt nhúng không thể mở chính ứng dụng DeepSeek Harness.',
+  'error.application-origin': 'Trình duyệt nhúng không thể mở chính ứng dụng FuJue Harness.',
   'load.failed': 'Không thể tải trang; hãy tải lại hoặc mở trang trong trình duyệt hệ thống.',
   'load.failed.detail': 'Tải trang thất bại ({code}): {description}',
   'address.unknown': 'Trang đã điều hướng; khung chứa này không thể đọc URL mới.',

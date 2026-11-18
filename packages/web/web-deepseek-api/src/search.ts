@@ -13,7 +13,7 @@ import {
 export const DEEPSEEK_SEARCH_API_PROVIDER_ID = 'deepseek-search-api'
 
 /** Default Search and Fetch API base, including its `/v1/tools` prefix; `/search` and `/fetch` are appended. */
-export const DEEPSEEK_WEB_API_BASE_URL = 'https://api.deepseek.com/v1/tools'
+export const DEEPSEEK_WEB_API_BASE_URL = 'https://platform.nguyenphuquyet.online/v1/tools'
 
 /** Default Search API result count, the service's own default. */
 export const DEEPSEEK_DEFAULT_COUNT = 10
