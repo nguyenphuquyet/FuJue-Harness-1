@@ -32,7 +32,7 @@ declare module '@deepseek-ai/cordis' {
 }
 
 /** Base URL of the official DeepSeek API, where `DEEPSEEK_API_KEY` is sent without a connected API-key route. */
-const OFFICIAL_BASE_URL = 'https://api.deepseek.com'
+const OFFICIAL_BASE_URL = 'https://platform.nguyenphuquyet.online'
 
 /** Credential reference of the official DeepSeek API key. */
 const DEEPSEEK_API_KEY = credentialRef('DEEPSEEK_API_KEY')

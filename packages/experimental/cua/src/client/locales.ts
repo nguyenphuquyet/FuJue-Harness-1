@@ -535,4 +535,8 @@ export const vi = {
   iconsFailed: 'Không thể tải biểu tượng ứng dụng: {message}',
   failed: 'Không thể cập nhật quyền: {message}',
   queryFailed: 'Không thể kiểm tra quyền: {message}',
+  'previewNotice': 'Điều khiển máy tính là bản xem trước thử nghiệm. Agent có thể bấm nhầm nút hoặc nhập vào nhầm cửa sổ. Hãy thận trọng trong môi trường thực tế. Chúng tôi khuyến nghị dùng chế độ PTC gốc để agent vừa điều khiển ứng dụng vừa gọi các công cụ khác trong cùng một chương trình.',
+  'windowsHelperBuild': 'Nếu bạn cài DSH qua npm, hãy dựng helper Windows từ đúng mã nguồn DSH. Trong {directory}, chạy {x64} hoặc {arm64} với .NET 10 SDK cho kiến trúc của bạn.',
+  'providerLookupFailed': 'Không xác định được nhà cung cấp điều khiển máy tính: {message}',
+  'windowsHelperPath': 'Trong {patch} của hồ sơ đang dùng, tìm hoặc thêm mục có ID {entry}. Đặt {path} trong {config} của mục đó thành đường dẫn tuyệt đối tới {exe}.',
 } satisfies Record<keyof typeof en, string>

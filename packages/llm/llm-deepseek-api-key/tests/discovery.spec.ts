@@ -94,7 +94,7 @@ it('connects its route id, key reference and deployment, so other DeepSeek consu
     await expect(ctx.deepseekAuth.authorize(search)).rejects.toThrow('llm-deepseek-api-key: the API key resolved from ROUTE_KEY contains characters')
     await route.dispose()
     expect(ctx.deepseekAuth.routeKind('deepseek-official')).toBeUndefined()
-    expect(await ctx.deepseekAuth.authorize(search)).toMatchObject({ endpoint: 'https://api.deepseek.com/v1/tools/search', reference: 'DEEPSEEK_API_KEY' })
+    expect(await ctx.deepseekAuth.authorize(search)).toMatchObject({ endpoint: 'https://platform.nguyenphuquyet.online/v1/tools/search', reference: 'DEEPSEEK_API_KEY' })
   } finally {
     await ctx.fiber.dispose()
     vi.unstubAllEnvs()

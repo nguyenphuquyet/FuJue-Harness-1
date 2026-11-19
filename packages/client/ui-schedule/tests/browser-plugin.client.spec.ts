@@ -468,7 +468,8 @@ describe('ui-schedule browser half', () => {
           expect(startSession).toHaveBeenLastCalledWith(undefined, { prompt, whenDraftExists: 'append' })
         }
       }
-      expect(startSession).toHaveBeenCalledTimes(64)
+      expect(startSession).toHaveBeenCalledTimes(Object.values(managerLocales).flatMap(dictionary =>
+        Object.keys(dictionary).filter(key => key.startsWith('recommend.') && key.endsWith('.prompt'))).length)
     } finally {
       await fiber.dispose()
       owner()

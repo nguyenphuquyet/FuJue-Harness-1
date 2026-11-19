@@ -886,4 +886,10 @@ export const vi = {
   detailInvalid: 'Plugin khai báo một tệp chi tiết không hợp lệ.',
   detailFailed: 'Không thể đọc chi tiết.',
   footnotes: 'Chú thích cuối trang',
+  'sourcePath': 'Đường dẫn tệp chỉ mục',
+  'sourceRef': 'Git ref',
+  'sourceDefaultRef': 'Nhánh mặc định',
+  'sourceInvalidGit': 'Dùng địa chỉ kho HTTPS hoặc SSH cùng đường dẫn chỉ mục và Git ref hợp lệ.',
+  'sourceRepositoryPlaceholder': 'https://github.com/owner/repository',
+  'sourcePathPlaceholder': 'index.json',
 } satisfies Record<keyof typeof en, string>

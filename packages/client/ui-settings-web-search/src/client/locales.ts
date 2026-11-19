@@ -455,4 +455,5 @@ export const vi = {
   billingApiKey: 'API key DeepSeek',
   billingApiKeyHint: 'Dùng API key ở trang Mô hình; hãy thiết lập trước.',
   billingAdvancedOverride: 'Bị ghi đè bởi {fields}',
+  'searchAutoHint': 'Theo mô hình của cuộc trò chuyện: mô hình DeepSeek dùng tìm kiếm phía máy chủ DeepSeek, không tính phí theo lần tìm; các mô hình khác dùng DeepSeek Search API.',
 } satisfies Record<keyof typeof en, string>

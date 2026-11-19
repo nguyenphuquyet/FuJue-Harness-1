@@ -15,7 +15,7 @@ afterEach(async () => {
 const SIGNED_OUT_CANCEL = [{ kind: 'hook', reason: 'deepseek-account/signed-out' }, { keepInbox: true }]
 const SIGNED_OUT_FAILURE = {
   code: 'ACCOUNT_SIGN_IN_REQUIRED',
-  message: 'The DeepSeek account signed out before this request finished. Sign in to DeepSeek to use the account provider.',
+  message: 'The FuJue account signed out before this request finished. Sign in to FuJue to use the account provider.',
 }
 
 /**

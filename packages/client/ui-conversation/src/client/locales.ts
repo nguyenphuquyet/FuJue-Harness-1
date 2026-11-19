@@ -3655,4 +3655,5 @@ export const vi = {
   'terminal.expandRest': '… {n} dòng nữa',
   'terminal.sendInput': '(gửi dữ liệu nhập)',
   'terminal.session': 'Terminal {sessionId}',
+  'attachments.unavailable': 'Một số tệp đính kèm trong bản nháp không còn khả dụng; hãy thêm lại.',
 } satisfies Record<keyof typeof en, string>

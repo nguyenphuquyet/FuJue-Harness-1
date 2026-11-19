@@ -360,10 +360,7 @@ export const pt = {
 
 /** Vietnamese dictionary, checked against the English keys. */
 export const vi = {
-  'count.idle.one': '{count} tác vụ nền',
-  'count.idle.other': '{count} tác vụ nền',
   'list.aria': 'Tác vụ nền',
-  'section.live': 'Đang chạy',
   'section.settledCount': 'Đã kết thúc {count}',
   'section.clear': 'Xóa',
   'row.expandAria': 'Hiện đầu ra trực tiếp của {label}',
@@ -380,8 +377,6 @@ export const vi = {
   'duration.seconds': '{seconds} giây',
   'duration.minutes': '{minutes} phút {seconds} giây',
   'duration.hours': '{hours} giờ {minutes} phút',
-  'duration.title.live': 'Đã chạy {duration}',
-  'duration.title.done': 'Mất {duration}',
   'output.gap': '… đầu ra trước đó đã bị bỏ …',
   'output.error': 'luồng đầu ra trực tiếp bị gián đoạn: {error}',
   'terminal.signal': 'tín hiệu {signal}',
@@ -398,4 +393,11 @@ export const vi = {
   'terminal.collapseAria': 'Thu gọn đầu ra',
   'terminal.expand': 'Hiện thêm {n} dòng',
   'terminal.expandAria': 'Mở rộng {n} dòng đầu ra đã thu gọn',
+  'indicator.running': 'Tác vụ nền đang chạy: {count}',
+  'live.more': 'Hiện thêm {count} tác vụ đang chạy',
+  'live.foldName': '{label} (tác vụ nền đang chạy)',
+  'settled.more': 'Hiện thêm {count} tác vụ đã kết thúc',
+  'settled.foldName': '{label} (tác vụ nền đã kết thúc)',
+  'fold.less': 'Thu gọn',
+  'kill.stopAria': 'Dừng tác vụ {label}',
 } satisfies Record<keyof typeof en, string>

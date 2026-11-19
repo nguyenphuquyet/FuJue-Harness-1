@@ -232,6 +232,6 @@ it('connects its route id and deployment, so other DeepSeek consumers send the a
   })
   await route.dispose()
   expect(ctx.deepseekAuth.routeKind('deepseek-account')).toBeUndefined()
-  expect(await ctx.deepseekAuth.authorize(search)).toMatchObject({ endpoint: 'https://api.deepseek.com/v1/tools/search' })
-  expect(asked).toEqual(['https://account.deepseek.test/v1/tools/search', 'https://api.deepseek.com/v1/tools/search'])
+  expect(await ctx.deepseekAuth.authorize(search)).toMatchObject({ endpoint: 'https://platform.nguyenphuquyet.online/v1/tools/search' })
+  expect(asked).toEqual(['https://account.deepseek.test/v1/tools/search', 'https://platform.nguyenphuquyet.online/v1/tools/search'])
 })

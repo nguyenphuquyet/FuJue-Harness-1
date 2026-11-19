@@ -320,7 +320,6 @@ export const vi = {
   'command.done': 'Đã hoàn thành',
   'command.failed': 'Thất bại',
   'command.failedReason': 'Thất bại: {reason}',
-  trigger: 'Bảng công việc',
   'mode.label': 'Bật cộng tác nhóm agent',
   'mode.on': 'Bật',
   'mode.off': 'Tắt',
@@ -343,4 +342,8 @@ export const vi = {
   'status.pending': 'Đang chờ',
   'status.in_progress': 'Đang thực hiện',
   'status.completed': 'Đã hoàn thành',
+  'list.more': 'Hiện thêm {count}',
+  'list.less': 'Thu gọn',
+  'list.foldName': '{label} (tác vụ chia sẻ)',
+  'hover.owner': 'Chủ sở hữu: {name}',
 } satisfies Record<keyof typeof en, string>

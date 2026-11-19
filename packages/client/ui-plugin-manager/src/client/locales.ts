@@ -2711,4 +2711,8 @@ export const vi = {
   detailInvalid: 'Plugin khai báo tệp chi tiết không hợp lệ.',
   detailFailed: 'Không thể đọc chi tiết.',
   detailFootnotes: 'Chú thích',
+  'settingsEntry': 'Plugin',
+  'clientSyncing': 'Đang đồng bộ plugin trên trang này…',
+  'clientSyncFailed': 'Một số plugin không đồng bộ được trên trang này. Trạng thái bật ở máy chủ không thay đổi.',
+  'clientSyncRetry': 'Thử lại trang này',
 } satisfies Record<keyof typeof en, string>

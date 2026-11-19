@@ -52,6 +52,8 @@ export const vi = {
   'time.days': '{n} ngày',
   'time.months': '{n} tháng',
   'time.years': '{n} năm',
+  'menu.addToChat': 'Thêm vào trò chuyện',
+  'menu.addToChatFailed': 'Không thêm được tệp. Hãy quay lại cuộc trò chuyện và thử lại.',
 } satisfies Record<keyof typeof en, string>
 
 declare module '@deepseek-ai/dsh-client-ui-slots' {

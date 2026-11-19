@@ -2132,7 +2132,6 @@ export const vi = {
   'viewer.row.fork': 'Tách nhánh phiên',
   'viewer.row.forkSource': 'Được tách nhánh từ “{title}”',
   'viewer.row.branchRefused': 'Không thể hoàn tất việc tách nhánh: {reason}',
-  'viewer.sharePath.unavailable': 'Trang này không thể mở tệp của không gian làm việc: bản chia sẻ chỉ trao đường dẫn tệp, không trao nội dung tệp.',
   'viewer.reason.fork-not-permitted': 'Chủ sở hữu không cho phép tách nhánh phiên này',
   'viewer.reason.fork-not-implemented': 'Bản triển khai này chưa hỗ trợ tách nhánh',
   'viewer.reason.write-not-implemented': 'Bản triển khai này chưa hỗ trợ ghi',

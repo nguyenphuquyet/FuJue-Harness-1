@@ -14,7 +14,7 @@ import { apply as applyLocale, inject as localeInject } from '@deepseek-ai/dsh-c
 import { SubagentHeaderLineage } from '../src/client/SubagentHeaderLineage.tsx'
 import type { SubagentCatalogInjected } from '../src/client/SubagentCatalog.tsx'
 import { resolveSlotLabel } from '@deepseek-ai/dsh-client-ui-slots'
-import { en } from '../src/client/locales.ts'
+import { vi as viDictionary } from '../src/client/locales.ts'
 import {
   SubagentReadOnlyComposer, type SubagentReadOnlyMatch,
 } from '../src/client/SubagentReadOnlyComposer.tsx'
@@ -191,7 +191,8 @@ describe('apply', () => {
     const sectionEntry = ctx.slots.entries('conversation.session.panel.section')
       .find(entry => entry.options.id === 'subagents')!
     expect(sectionEntry.options.order).toBe(200)
-    expect(resolveSlotLabel(sectionEntry.options.label)).toBe(en['section.title'])
+    // This deployment's default locale is Vietnamese, so the registered dictionary resolves from vi.
+    expect(resolveSlotLabel(sectionEntry.options.label)).toBe(viDictionary['section.title'])
     expect(ctx.slots.entries('conversation.session.panel.section.actions').map(entry => entry.options.key)).toEqual(['subagents'])
     expect(ctx.slots.entries('conversation.session.panel.indicator')[0]).toMatchObject({ options: { id: 'subagents.running', order: 10 } })
     const sectionActions = (sectionEntry.inject as (id: SessionId) => SubagentCatalogInjected)(sid('parent'))

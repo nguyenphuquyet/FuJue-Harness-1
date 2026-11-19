@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it } from 'vitest'
 import { DeepSeekAuthError } from '@deepseek-ai/dsh-deepseek-auth'
 import { disposeMounted, mount, request, summary } from './harness.ts'
 
-const OFFICIAL = 'https://api.deepseek.com/v1/tools/search'
+const OFFICIAL = 'https://platform.nguyenphuquyet.online/v1/tools/search'
 const ROUTE = 'https://route.deepseek.test/anthropic'
 const ACCOUNT = 'https://account.deepseek.test/anthropic'
 
@@ -43,7 +43,7 @@ describe('billing order', () => {
   it('never offers a kind the destination does not accept', async () => {
     const ctx = await mount()
     expect(summary(ctx.deepseekAuth.candidates(request({ accepts: ['api-key'], destination: { path: '/v1/tools/asr' } }))))
-      .toEqual(['api-key https://api.deepseek.com/v1/tools/asr'])
+      .toEqual(['api-key https://platform.nguyenphuquyet.online/v1/tools/asr'])
     expect(ctx.deepseekAuth.candidates(request({ accepts: ['api-key'], billing: 'account' }))).toEqual([])
   })
 

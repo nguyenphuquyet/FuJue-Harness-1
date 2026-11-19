@@ -7,7 +7,7 @@ import { candidate, disposeMounted, mount, request } from './harness.ts'
 
 afterEach(disposeMounted)
 
-const SEARCH = 'https://api.deepseek.com/v1/tools/search'
+const SEARCH = 'https://platform.nguyenphuquyet.online/v1/tools/search'
 const key = request({ billing: 'api-key' })
 const signIn = request({ billing: 'account' })
 
@@ -56,7 +56,7 @@ describe('the API key', () => {
     ],
   ])('refuses the unusable key %j, naming its owner and reference and never the key', async (value, owner, message) => {
     const ctx = await mount({ stored: { DEEPSEEK_API_KEY: value } })
-    const connections = { 'api-key': { baseURL: 'https://api.deepseek.com', ...owner === undefined ? {} : { owner } } }
+    const connections = { 'api-key': { baseURL: 'https://platform.nguyenphuquyet.online', ...owner === undefined ? {} : { owner } } }
     const failure = await ctx.deepseekAuth.authorize({ ...key, connections }).catch((error: unknown) => error)
     expect(failure).toBeInstanceOf(DeepSeekAuthError)
     expect(failure).toMatchObject({ code: 'INVALID_CREDENTIAL', message })

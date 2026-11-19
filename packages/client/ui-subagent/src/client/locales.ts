@@ -409,7 +409,6 @@ export const pt = {
 /** Vietnamese dictionary, checked against the English keys. */
 export const vi = {
   'section.title': 'Agent con',
-  'section.empty': 'Không có agent con',
   'progress.completed': '{count} đã hoàn thành',
   'progress.active': '{count} đang thực hiện',
   'progress.inactive': '{count} không chạy',
@@ -424,7 +423,6 @@ export const vi = {
   'duration.years': '~{years} năm',
   'duration.yearsMonths': '~{years} năm {months} tháng',
   'duration.exactDays': '{days} ngày {hours} giờ {minutes} phút {seconds} giây',
-  'duration.exactTitle': 'Tổng thời gian hoạt động: {duration}',
   'tokens.thousand': '{value}K',
   'tokens.million': '{value}M',
   'tokens.total': '{value} tok',
@@ -442,10 +440,6 @@ export const vi = {
   'activity.inactive': 'không chạy',
   'branch.collapse': 'Thu gọn các nhánh con của {label}',
   'branch.expand': 'Mở rộng các nhánh con của {label}',
-  'count.total.one': '{count} agent con',
-  'count.total.other': '{count} agent con',
-  'count.running.one': '{count} agent con đang chạy',
-  'count.running.other': '{count} agent con đang chạy',
   'switcher.aria': 'Chuyển agent con: {title}',
   'tree.aria': 'Phiên agent con',
   'open.sidebar': 'Mở trong thanh bên',
@@ -455,4 +449,9 @@ export const vi = {
   'readonly.oneShot.title': 'Bản ghi agent con một lần',
   'readonly.title': 'Agent con này hiện chỉ đọc',
   'readonly.oneShot.body': 'Tác vụ một lần không nhận tin nhắn tiếp theo; xem toàn bộ bản ghi thực thi tại đây.',
+  'indicator.running': 'Tác nhân phụ đang chạy: {count}',
+  'list.more': 'Hiện thêm {count}',
+  'list.less': 'Thu gọn',
+  'list.foldName': '{label} (tác nhân phụ)',
+  'hover.owner': 'Chủ sở hữu: {name}',
 } satisfies Record<keyof typeof en, string>
