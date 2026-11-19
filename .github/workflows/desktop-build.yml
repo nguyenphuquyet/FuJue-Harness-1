@@ -44,7 +44,7 @@ jobs:
       # Installer archive compression: 3 packages faster, 7 packages smaller.
       DESKTOP_PACKAGE_COMPRESSION_LEVEL: '3'
     steps:
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - uses: pnpm/action-setup@v5.0.0
@@ -110,7 +110,7 @@ jobs:
       run:
         shell: bash
     steps:
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - uses: pnpm/action-setup@v5.0.0
