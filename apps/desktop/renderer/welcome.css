@@ -93,11 +93,13 @@ body {
   grid-column: 1;
 }
 
+/* The lockup is sized by height so its aspect ratio stays intact; the intrinsic
+   aspect comes from the asset itself (127.76 x 23.32). */
 .brand {
   display: block;
   flex: none;
-  width: 100%;
-  height: 40px;
+  width: auto;
+  height: 36px;
   user-select: none;
   -webkit-user-drag: none;
 }
