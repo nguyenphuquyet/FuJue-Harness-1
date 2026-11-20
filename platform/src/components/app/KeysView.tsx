@@ -175,7 +175,7 @@ export function KeysView({ initialKeys }: { readonly initialKeys: readonly ApiKe
             <p>Khoá hoạt động với API OpenAI, cổng Anthropic và FuJue Harness Desktop.</p>
           </div>
         </div>
-        <div className="fj-code-block">{`curl https://platform.nguyenphuquyet.online/v1/chat/completions \\
+        <div className="fj-code-block">{`curl https://platform.nguyenphuquyet.online/api/v1/chat/completions \\
   -H "Authorization: Bearer fjk_sk_..." \\
   -H "Content-Type: application/json" \\
   -d '{"model":"deepseek-flash","messages":[{"role":"user","content":"Xin chào"}]}'`}</div>

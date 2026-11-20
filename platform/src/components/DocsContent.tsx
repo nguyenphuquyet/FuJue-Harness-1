@@ -161,10 +161,10 @@ export function DocsContent() {
             <span className="fj-mono">x-api-key</span> nếu ứng dụng của bạn dùng kiểu đó.
           </p>
           <h3>Liệt kê mô hình</h3>
-          <div className="fj-code-block">{`curl https://platform.nguyenphuquyet.online/v1/models \\
+          <div className="fj-code-block">{`curl https://platform.nguyenphuquyet.online/api/v1/models \\
   -H "Authorization: Bearer $FJ_API_KEY"`}</div>
           <h3>Chat completions</h3>
-          <div className="fj-code-block">{`curl https://platform.nguyenphuquyet.online/v1/chat/completions \\
+          <div className="fj-code-block">{`curl https://platform.nguyenphuquyet.online/api/v1/chat/completions \\
   -H "Authorization: Bearer $FJ_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -179,7 +179,7 @@ export function DocsContent() {
   }'`}</div>
           <p>
             Đặt <span className="fj-mono">base_url</span> của SDK thành{' '}
-            <span className="fj-mono">https://platform.nguyenphuquyet.online/v1</span> và dùng khoá FuJue. Trường{' '}
+            <span className="fj-mono">https://platform.nguyenphuquyet.online/api/v1</span> và dùng khoá FuJue. Trường{' '}
             <span className="fj-mono">stream</span> được chuyển nguyên trạng; chi phí vẫn được ghi khi stream kết
             thúc.
           </p>
@@ -188,7 +188,7 @@ export function DocsContent() {
 
 client = OpenAI(
     api_key="fjk_sk_...",
-    base_url="https://platform.nguyenphuquyet.online/v1",
+    base_url="https://platform.nguyenphuquyet.online/api/v1",
 )
 
 reply = client.chat.completions.create(

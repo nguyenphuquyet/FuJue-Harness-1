@@ -83,6 +83,34 @@ export function anthropicBaseUrl(): string | null {
   return configured === undefined || configured === '' ? null : configured.replace(/\/+$/, '')
 }
 
+/**
+ * Root of the DeepSeek Search and Fetch API, without a trailing slash.
+ *
+ * `DEEPSEEK_TOOLS_BASE_URL` names the root directly. Otherwise it follows the
+ * default provider's OpenAI-compatible root, which either already ends in `/v1`
+ * or holds the API one level below `/v1`, as the official API does.
+ *
+ * @param chatBaseUrl - OpenAI-compatible root of the deployment's default provider.
+ * @returns the root below which `/search` and `/fetch` are appended.
+ */
+export function toolsBaseUrl(chatBaseUrl: string): string {
+  const configured = process.env.DEEPSEEK_TOOLS_BASE_URL?.trim()
+  if (configured !== undefined && configured !== '') return configured.replace(/\/+$/, '')
+  const root = chatBaseUrl.replace(/\/+$/, '')
+  return root.endsWith('/v1') ? `${root}/tools` : `${root}/v1/tools`
+}
+
+/**
+ * Credential the Search and Fetch API requests carry.
+ *
+ * @param fallback - the default provider's credential.
+ * @returns `DEEPSEEK_TOOLS_API_KEY` when the operator configured a separate one.
+ */
+export function toolsApiKey(fallback: string): string {
+  const configured = process.env.DEEPSEEK_TOOLS_API_KEY?.trim()
+  return configured === undefined || configured === '' ? fallback : configured
+}
+
 /** Provider credential forwarded by every metered model request. */
 export function upstreamApiKey(): string | undefined {
   const key = process.env.DEEPSEEK_API_KEY?.trim()

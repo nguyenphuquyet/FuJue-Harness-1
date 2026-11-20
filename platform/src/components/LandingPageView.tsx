@@ -305,7 +305,7 @@ export function LandingPageView({
                 </div>
                 <div className="fj-code-block" style={{ marginTop: 14 }} aria-label="Gọi API bằng curl">
                   <span className="tok-com"># Gọi API bằng khoá FuJue</span>
-                  {'\n'}curl https://platform.nguyenphuquyet.online/v1/chat/completions \{'\n'}
+                  {'\n'}curl https://platform.nguyenphuquyet.online/api/v1/chat/completions \{'\n'}
                   {'  '}-H <span className="tok-str">&quot;Authorization: Bearer $FJ_API_KEY&quot;</span> \{'\n'}
                   {'  '}-H <span className="tok-str">&quot;Content-Type: application/json&quot;</span> \{'\n'}
                   {'  '}-d <span className="tok-str">&apos;{'{'}&quot;model&quot;:&quot;deepseek-flash&quot;,&quot;messages&quot;:[{'{'}&quot;role&quot;:&quot;user&quot;,&quot;content&quot;:&quot;Xin chào&quot;{'}'}]{'}'}&apos;</span>

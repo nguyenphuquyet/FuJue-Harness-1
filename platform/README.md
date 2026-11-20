@@ -10,7 +10,8 @@ Platform phục vụ đúng giao thức mà FuJue Harness Desktop đang dùng, n
 - **Khoá API** — tạo, xem tiền tố, thu hồi tức thì. Chỉ băm SHA-256 được lưu; bí mật hiển thị đúng một lần.
 - **Playground** — chọn mô hình, system prompt, temperature, độ dài tối đa; mỗi lượt hiện token và chi phí.
 - **Đo lường** — token vào/ra, chi phí, phân bổ theo ngày, mô hình, khoá và nguồn gọi (Playground / API / Desktop).
-- **Cổng mô hình** — OpenAI-compatible (`/v1/chat/completions`) cho ứng dụng bất kỳ và Anthropic-compatible (`/anthropic/*`) cho Desktop. Nhà cung cấp chỉ có endpoint OpenAI vẫn phục vụ được Desktop: cổng tự dịch yêu cầu, lời gọi công cụ và luồng sự kiện sang `/chat/completions`.
+- **Cổng mô hình** — OpenAI-compatible (`/api/v1/chat/completions`) cho ứng dụng bất kỳ và Anthropic-compatible (`/anthropic/*`) cho Desktop. Nhà cung cấp chỉ có endpoint OpenAI vẫn phục vụ được Desktop: cổng tự dịch yêu cầu, lời gọi công cụ và luồng sự kiện sang `/chat/completions`.
+- **Tìm kiếm và tải trang** — `/v1/tools/search` và `/v1/tools/fetch` chuyển tiếp nguyên văn DeepSeek Search/Fetch API, để tính năng web search của Desktop đi qua Platform mà không cần khoá riêng.
 - **Suy luận theo mô hình** — bật/tắt và tự đặt danh sách mức (mã + giá trị API) cùng mức mặc định trong `/admin/models`; cổng mô hình ép đúng chính sách đó cho cả hai giao thức.
 - **Thông báo trong app** — danh sách, nội dung, sự kiện hiển thị/CTA/đóng, song ngữ Việt–Anh.
 - **Quản lý thiết bị** — xem và thu hồi từng token Desktop, hoặc thu hồi toàn bộ.
@@ -89,6 +90,8 @@ node scripts/apply-content.mjs đường/dẫn/tới/seed-content.json
 | `DEEPSEEK_UPSTREAM_URL` | không | Gốc OpenAI-compatible mặc định, dùng khi nhà cung cấp để trống URL. Mặc định `https://api.deepseek.com`. |
 | `DEEPSEEK_ANTHROPIC_BASE_URL` | không | Gốc Anthropic-compatible mặc định. Để trống thì cổng `/anthropic` dịch sang `/chat/completions` của gốc OpenAI, nên hầu hết nhà cung cấp bên thứ ba chỉ cần URL OpenAI. |
 | `DEEPSEEK_MODEL_MAP` | không | JSON ánh xạ id Platform → id nhà cung cấp cho mô hình chưa có `upstream_id`, ví dụ `{"deepseek-flash":"provider-model"}`. |
+| `DEEPSEEK_TOOLS_BASE_URL` | không | Gốc DeepSeek Search/Fetch API, không có `/search` hay `/fetch`. Mặc định suy ra từ gốc OpenAI của nhà cung cấp mặc định: `<gốc>/v1/tools`, hoặc `<gốc>/tools` khi gốc đã kết thúc bằng `/v1`. |
+| `DEEPSEEK_TOOLS_API_KEY` | không | Khoá riêng cho Search/Fetch API. Bỏ trống thì dùng khoá của nhà cung cấp mặc định. |
 | `HARNESS_VERSION` | không | Phiên bản FuJue Harness mặc định trên trang tải, ví dụ `0.2.2`. Quản trị viên có thể ghi đè trong `/admin/downloads`. |
 | `HARNESS_RELEASES_URL` | không | Trang phát hành mặc định cho các bộ cài chưa có URL trực tiếp. |
 | `ALLOWED_REDIRECT_ORIGINS` | không | Danh sách origin HTTPS (phẩy) được phép nhận mã uỷ quyền ngoài origin của Platform. |
@@ -156,10 +159,10 @@ Trang tải lần đầu chưa có cookie nên hiển thị trạng thái "Đang
 
 ## API cho ứng dụng
 
-Base URL: `https://platform.nguyenphuquyet.online/v1` (OpenAI-compatible) hoặc `https://platform.nguyenphuquyet.online/anthropic` (Anthropic-compatible).
+Base URL: `https://platform.nguyenphuquyet.online/api/v1` (OpenAI-compatible) hoặc `https://platform.nguyenphuquyet.online/anthropic` (Anthropic-compatible).
 
 ```sh
-curl https://platform.nguyenphuquyet.online/v1/chat/completions \
+curl https://platform.nguyenphuquyet.online/api/v1/chat/completions \
   -H "Authorization: Bearer $FJ_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -172,7 +175,7 @@ curl https://platform.nguyenphuquyet.online/v1/chat/completions \
 ```python
 from openai import OpenAI
 
-client = OpenAI(api_key="fjk_sk_...", base_url="https://platform.nguyenphuquyet.online/v1")
+client = OpenAI(api_key="fjk_sk_...", base_url="https://platform.nguyenphuquyet.online/api/v1")
 print(client.chat.completions.create(
     model="deepseek-flash",
     messages=[{"role": "user", "content": "Xin chào"}],
@@ -214,9 +217,17 @@ Cổng mô hình áp chính sách trước khi gọi nhà cung cấp:
 | --- | --- |
 | Anthropic (`/anthropic/messages`) | `thinking: { type: 'disabled' \| 'enabled' }` và `output_config: { effort: <apiValue> }` (bỏ `output_config` khi tắt suy luận). |
 | Anthropic dịch sang OpenAI (nhà cung cấp chỉ có `chat_base_url`) | `reasoning_effort: <apiValue>`; bỏ trường khi tắt suy luận. |
-| OpenAI (`/v1/chat/completions`) | `reasoning_effort: <apiValue>`; bỏ trường khi tắt suy luận. |
+| OpenAI (`/api/v1/chat/completions`) | `reasoning_effort: <apiValue>`; bỏ trường khi tắt suy luận. |
 
 Nhà cung cấp không nhận `reasoning_effort` thì tắt suy luận cho mô hình đó trong `/admin/models`.
+
+### Tìm kiếm và tải trang
+
+Desktop gọi `POST /v1/tools/search` và `POST /v1/tools/fetch` bằng đúng body của DeepSeek Search/Fetch API, ví dụ `{ "query": "…", "count": 10, "need_content": false }` và `{ "url": "https://…" }`. Platform xác thực người gọi bằng khoá API, token thiết bị hoặc cookie phiên rồi chuyển tiếp nguyên body, trả nguyên JSON của nhà cung cấp. Cùng một handler cũng có mặt dưới tiền tố `/api/v1/tools/*`, vì Desktop suy ra `/v1/tools/*` từ origin của route mô hình còn tài liệu API dùng `/api/v1`.
+
+Đích chuyển tiếp lấy từ nhà cung cấp mặc định (`DEEPSEEK_TOOLS_*`, xem bảng biến môi trường): mặc định là `<gốc OpenAI>/v1/tools`, nên `https://api.deepseek.com` cho `https://api.deepseek.com/v1/tools`. Nhà cung cấp chỉ phục vụ chat (ví dụ một router không có Search API) thì đặt `DEEPSEEK_TOOLS_BASE_URL` và `DEEPSEEK_TOOLS_API_KEY` riêng để tìm kiếm đi thẳng tới DeepSeek.
+
+Lỗi 401/403 của nhà cung cấp được đổi thành `502 upstream_unauthorized` để Desktop không xoá khoá Platform vẫn còn hiệu lực; các lỗi khác (hết hạn mức, URL không tải được, body sai) trả nguyên trạng thái và JSON của nhà cung cấp.
 
 ### Đo lường và số dư
 
@@ -233,7 +244,9 @@ Nhà cung cấp không nhận `reasoning_effort` thì tắt suy luận cho mô h
 | 401 | `invalid_api_key` | Thiếu khoá, khoá bị thu hồi, token hết hiệu lực. |
 | 402 | `insufficient_quota` | Số dư bằng 0. |
 | 404 | `model_not_found` | Platform không phục vụ model đó. |
+| 404 | `not_found` | `/v1/tools/*` chỉ phục vụ `search` và `fetch`. |
 | 502 | `upstream_unreachable` | Không gọi được nhà cung cấp. |
+| 502 | `upstream_unauthorized` | Nhà cung cấp từ chối khoá API mà Platform đang giữ. |
 | 503 | `upstream_not_configured` | Máy chủ thiếu `DEEPSEEK_API_KEY`. |
 
 ## Bảng quản trị
@@ -265,6 +278,8 @@ platform/
     auth-api/v0/dsh/         Giao thức PKCE của Desktop
     api/v0/users/            Hồ sơ, ví, thông báo cho Desktop
     api/v1/                  Cổng OpenAI-compatible
+    api/v1/tools/            Bản sao Search/Fetch API dưới tiền tố /api/v1
+    v1/tools/                Search/Fetch API mà Desktop suy ra từ origin route mô hình
     anthropic/[...path]/     Cổng Anthropic-compatible
     models/                  Danh mục mô hình cho Desktop
     download/                Trang tải FuJue Harness
@@ -281,8 +296,9 @@ Luồng chính:
 4. `src/lib/upstream.ts` — chuyển tiếp OpenAI/Anthropic, đọc usage, bắt frame SSE để tính phí.
 5. `src/lib/anthropic-bridge.ts` — dịch Messages ↔ chat completions cho nhà cung cấp chỉ có endpoint OpenAI.
 6. `src/lib/model-store.ts` — danh mục mô hình, nhà cung cấp, phân giải endpoint và kiểm tra kết nối.
-7. `src/lib/downloads.ts` — cấu hình bộ cài hiển thị trên `/download`.
-8. `src/lib/admin.ts` — tổng hợp số liệu, quản lý tài khoản, thông báo và nhật ký quản trị.
+7. `src/lib/tools.ts` — chuyển tiếp Search/Fetch API và chọn đích chuyển tiếp.
+8. `src/lib/downloads.ts` — cấu hình bộ cài hiển thị trên `/download`.
+9. `src/lib/admin.ts` — tổng hợp số liệu, quản lý tài khoản, thông báo và nhật ký quản trị.
 
 ## Bảo mật
 
@@ -296,6 +312,7 @@ Luồng chính:
 
 - **Chưa có cổng thanh toán.** Số dư được cấp qua seed, trang quản trị hoặc cập nhật trực tiếp trong database.
 - **Đo lường stream phụ thuộc nhà cung cấp.** Nếu upstream không gửi frame `usage`, lượt stream không bị tính phí.
+- **Search/Fetch không tính phí.** Hai lời gọi này tính theo lượt ở nhà cung cấp nhưng chưa ghi `usage_events` hay trừ số dư; chi phí nằm ở hoá đơn nhà cung cấp.
 - **Chưa có hàng đợi/giới hạn theo phút.** Mọi yêu cầu hợp lệ đều được chuyển tiếp; thêm rate limit ở reverse proxy nếu cần.
 - **Một cấp quản trị.** Chưa có phân quyền chi tiết theo từng khu vực của bảng quản trị.
 - **Một tenant.** Chưa có tổ chức hay mời thành viên.
